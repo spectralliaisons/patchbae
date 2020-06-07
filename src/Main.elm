@@ -12,18 +12,14 @@ import Task
 import Array as Array
 import Debug exposing (log)
 
-import Msg.Msg exposing (Msg(..))
+import Msg.Msg exposing (Msg(..), Size)
 
 type alias Flags =
   {}
 
 type alias Model =
-    { size : Maybe Size
-    }
-
-type alias Size = 
-    { width : Int
-    , height : Int
+    { key : Navigation.Key
+    , size : Maybe Size
     }
 
 main : Program Flags Model Msg
@@ -42,7 +38,7 @@ init flags url key =
   let 
     -- we're about to get the real size
     size = Nothing
-    model = Model size
+    model = Model key size
   in
     ( model
     -- TODO: does this cause model / url parsing to happen twice?
@@ -97,7 +93,7 @@ subscriptions model = Sub.batch <|
   ]
 
 -- view : Model -> Browser.Document Msg
-view {size, portfolio} =
+view model =
   { title = ""
   , body = 
     [ div 

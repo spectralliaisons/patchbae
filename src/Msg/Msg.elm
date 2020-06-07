@@ -1,4 +1,4 @@
-module Msg.Msg exposing (Msg(..))
+module Msg.Msg exposing (Msg(..), Size)
 
 import Url
 import Browser
@@ -9,3 +9,8 @@ type Msg
     | UrlChanged Url.Url
     | Initialize Size
     | SetSize Size
+
+type alias Size = 
+    { width : Int
+    , height : Int
+    }
