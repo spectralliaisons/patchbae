@@ -1,4 +1,7 @@
-module Msg.Patchbae exposing (Msg(..), Size)
+module Msg.Patchbae exposing (Msg(..))
+
+import Models.Patchbae exposing (Patch)
+import Models.Style exposing (Size)
 
 import Url
 import Browser
@@ -9,8 +12,4 @@ type Msg
     | UrlChanged Url.Url
     | Initialize Size
     | SetSize Size
-
-type alias Size = 
-    { width : Int
-    , height : Int
-    }
+    | SetPatchInstrument Patch String

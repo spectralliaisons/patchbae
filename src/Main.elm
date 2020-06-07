@@ -12,8 +12,9 @@ import Task
 import Array as Array
 import Debug exposing (log)
 
-import Msg.Patchbae exposing (Msg(..), Size)
-import Models.Patchbae exposing (Model)
+import Msg.Patchbae exposing (Msg(..))
+import Models.Patchbae exposing (Model, initPatch)
+import Models.Style exposing (Size)
 import Views.Patchbae as PBV
 
 type alias Flags =
@@ -35,7 +36,7 @@ init flags url key =
   let 
     -- we're about to get the real size
     size = Nothing
-    model = Model key size []
+    model = Model key size [initPatch]
   in
     ( model
     -- TODO: does this cause model / url parsing to happen twice?
@@ -84,20 +85,33 @@ update msg model =
           , Cmd.none
           )
 
+        SetPatchInstrument patch instrument ->
+          let
+            patches1 = model.patches
+              |> List.map (\p -> 
+                if p.id == patch.id then
+                  {p | instrument = instrument}
+                else 
+                  p
+              )
+          in ( {model | patches = patches1}
+          , Cmd.none
+          )
+
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.batch <|
   [ Events.onResize (\w h -> SetSize <| Size w h)
   ]
 
 -- view : Model -> Browser.Document Msg
-view {patches} =
+view {size, patches} =
   { title = ""
   , body = 
     [ div 
       [ style "background-color" "#000000" 
       , style "overflow" "auto"
       ] 
-      [ PBV.view patches
+      [ PBV.view size patches
       ]
     ]
   }
