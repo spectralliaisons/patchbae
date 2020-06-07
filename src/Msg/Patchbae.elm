@@ -1,4 +1,4 @@
-module Msg.Msg exposing (Msg(..), Size)
+module Msg.Patchbae exposing (Msg(..), Size)
 
 import Url
 import Browser

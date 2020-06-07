@@ -12,15 +12,12 @@ import Task
 import Array as Array
 import Debug exposing (log)
 
-import Msg.Msg exposing (Msg(..), Size)
+import Msg.Patchbae exposing (Msg(..), Size)
+import Models.Patchbae exposing (Model)
+import Views.Patchbae as PBV
 
 type alias Flags =
   {}
-
-type alias Model =
-    { key : Navigation.Key
-    , size : Maybe Size
-    }
 
 main : Program Flags Model Msg
 main =
@@ -38,7 +35,7 @@ init flags url key =
   let 
     -- we're about to get the real size
     size = Nothing
-    model = Model key size
+    model = Model key size []
   in
     ( model
     -- TODO: does this cause model / url parsing to happen twice?
@@ -93,13 +90,14 @@ subscriptions model = Sub.batch <|
   ]
 
 -- view : Model -> Browser.Document Msg
-view model =
+view {patches} =
   { title = ""
   , body = 
     [ div 
       [ style "background-color" "#000000" 
       , style "overflow" "auto"
       ] 
-      [ ]
+      [ PBV.view patches
+      ]
     ]
   }
