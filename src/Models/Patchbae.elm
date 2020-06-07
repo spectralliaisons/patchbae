@@ -27,12 +27,12 @@ type alias Patch =
 initPatch : Patch
 initPatch = Patch
     0 -- id
-    "fkinstr" -- instrument
-    "fkcat" -- category
-    "fkaddr" -- address
-    "fknm" -- name
-    0 -- rating
-    (Set.fromList []) -- tags
+    "Prophet Rev-2" -- instrument
+    "Lead" -- category
+    "U4-P21" -- address
+    "Lazerkitty" -- name
+    4 -- rating
+    (Set.fromList ["funny"]) -- tags
     (Set.fromList []) -- projects
     [] -- family
     [] -- friends

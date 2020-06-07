@@ -111,6 +111,34 @@ update msg model =
         ( {model | patches = patches1}
         , Cmd.none
         )
+    
+    SetPatchAddress patch address ->
+      let
+        patches1 = model.patches
+          |> List.map (\p -> 
+            if p.id == patch.id then
+              {p | address = address}
+            else 
+              p
+          )
+      in 
+        ( {model | patches = patches1}
+        , Cmd.none
+        )
+    
+    SetPatchName patch name ->
+      let
+        patches1 = model.patches
+          |> List.map (\p -> 
+            if p.id == patch.id then
+              {p | name = name}
+            else 
+              p
+          )
+      in 
+        ( {model | patches = patches1}
+        , Cmd.none
+        )
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.batch <|

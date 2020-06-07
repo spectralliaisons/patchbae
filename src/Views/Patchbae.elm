@@ -30,6 +30,8 @@ drawPatch size i patch =
         ]
         [ drawTextInput Txt.instrument patch.instrument (SetPatchInstrument patch)
         , drawTextInput Txt.category patch.category (SetPatchCategory patch)
+        , drawTextInput Txt.address patch.address (SetPatchAddress patch)
+        , drawTextInput Txt.name patch.name (SetPatchAddress patch)
         ]
 
 drawTextInput : String -> String -> (String -> Msg) -> Element.Element Msg
@@ -47,7 +49,10 @@ drawTextInput label txt cmd =
         { onChange = cmd
         , text = txt
         , placeholder = Nothing
-        , label = Input.labelAbove [] <| text_ label
+        , label = Input.labelAbove 
+            [ Element.centerX
+            ] 
+            <| text_ label
         }
 
 text_ : String -> Element.Element Msg

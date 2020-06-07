@@ -14,3 +14,5 @@ type Msg
     | SetSize Size
     | SetPatchInstrument Patch String
     | SetPatchCategory Patch String
+    | SetPatchAddress Patch String
+    | SetPatchName Patch String
