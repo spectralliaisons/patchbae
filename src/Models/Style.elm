@@ -32,16 +32,19 @@ colorInputBg = "#000000"
 --
 
 sizeFontMed : Element.Attr decorative message
-sizeFontMed = Font.size 25
+sizeFontMed = Font.size 18
 
 heightRow : Int
 heightRow = 50
 
 widthColInstrument : Int
-widthColInstrument = 350
+widthColInstrument = 150
 
 borderRoundingLg : Int
 borderRoundingLg = 50
 
 widthBorderInput : Int
 widthBorderInput = 2
+
+paddingMedium : Int
+paddingMedium = 25

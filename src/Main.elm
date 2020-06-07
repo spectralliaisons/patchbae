@@ -1,4 +1,3 @@
--- port module Main exposing (init, update)
 module Main exposing (init, update)
 
 import Html exposing (..)
@@ -58,45 +57,60 @@ getViewportSize =
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-    case msg of
+  case msg of
 
-        UrlRequested urlRequest ->
-          case urlRequest of
-            Browser.Internal url ->
-              ( model, Navigation.pushUrl model.key (Url.toString url) )
+    UrlRequested urlRequest ->
+      case urlRequest of
+        Browser.Internal url ->
+          ( model, Navigation.pushUrl model.key (Url.toString url) )
 
-            Browser.External href ->
-              ( model, Navigation.load href )
+        Browser.External href ->
+          ( model, Navigation.load href )
 
-        UrlChanged url ->
-            ( model
-            , Cmd.none
-            )
-        
-        -- TODO: Portfolio Evaluator View should handle these
+    UrlChanged url ->
+        ( model
+        , Cmd.none
+        )
+    
+    -- TODO: Portfolio Evaluator View should handle these
 
-        Initialize size ->
-          ( {model | size = Just size}
-          , Cmd.none
+    Initialize size ->
+      ( {model | size = Just size}
+      , Cmd.none
+      )
+
+    SetSize size ->
+      ( {model | size = Just size}
+      , Cmd.none
+      )
+
+    SetPatchInstrument patch instrument ->
+      let
+        patches1 = model.patches
+          |> List.map (\p -> 
+            if p.id == patch.id then
+              {p | instrument = instrument}
+            else 
+              p
           )
-
-        SetSize size ->
-          ( {model | size = Just size}
-          , Cmd.none
+      in 
+        ( {model | patches = patches1}
+        , Cmd.none
+        )
+      
+    SetPatchCategory patch category ->
+      let
+        patches1 = model.patches
+          |> List.map (\p -> 
+            if p.id == patch.id then
+              {p | category = category}
+            else 
+              p
           )
-
-        SetPatchInstrument patch instrument ->
-          let
-            patches1 = model.patches
-              |> List.map (\p -> 
-                if p.id == patch.id then
-                  {p | instrument = instrument}
-                else 
-                  p
-              )
-          in ( {model | patches = patches1}
-          , Cmd.none
-          )
+      in 
+        ( {model | patches = patches1}
+        , Cmd.none
+        )
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.batch <|

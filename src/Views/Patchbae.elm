@@ -25,23 +25,30 @@ view s patches = Element.layout [] <|
 drawPatch : Size -> Int -> Patch -> Element.Element Msg
 drawPatch size i patch =
     Element.row
-        []
-        [ Input.text
-            [ Font.color <| elmUIColorFromHex Style.colorSystemFont
-            , Style.sizeFontMed
-            , Style.fontFamilyPatch
-            , Element.width <| Element.px Style.widthColInstrument
-            , Element.height <| Element.px Style.heightRow
-            , Background.color <| elmUIColorFromHex Style.colorInputBg
-            , Border.rounded Style.borderRoundingLg
-            , Border.width Style.widthBorderInput
-            ]
-            { onChange = SetPatchInstrument patch
-            , text = patch.instrument
-            , placeholder = Nothing
-            , label = Input.labelAbove [] <| text_ Txt.instrument
-            }
-    ]
+        [ Element.padding Style.paddingMedium
+        , Element.spacing Style.paddingMedium
+        ]
+        [ drawTextInput Txt.instrument patch.instrument (SetPatchInstrument patch)
+        , drawTextInput Txt.category patch.category (SetPatchCategory patch)
+        ]
+
+drawTextInput : String -> String -> (String -> Msg) -> Element.Element Msg
+drawTextInput label txt cmd =
+    Input.text
+        [ Font.color <| elmUIColorFromHex Style.colorSystemFont
+        , Style.sizeFontMed
+        , Style.fontFamilyPatch
+        , Element.width <| Element.px Style.widthColInstrument
+        , Element.height <| Element.px Style.heightRow
+        , Background.color <| elmUIColorFromHex Style.colorInputBg
+        , Border.rounded Style.borderRoundingLg
+        , Border.width Style.widthBorderInput
+        ]
+        { onChange = cmd
+        , text = txt
+        , placeholder = Nothing
+        , label = Input.labelAbove [] <| text_ label
+        }
 
 text_ : String -> Element.Element Msg
 text_ str = 

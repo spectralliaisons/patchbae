@@ -13,3 +13,4 @@ type Msg
     | Initialize Size
     | SetSize Size
     | SetPatchInstrument Patch String
+    | SetPatchCategory Patch String
