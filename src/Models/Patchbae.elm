@@ -8,6 +8,7 @@ import Models.Style exposing (Size)
 type alias Model =
     { key : Navigation.Key
     , size : Maybe Size
+    , lastID : Int
     , patches : List Patch
     }
 

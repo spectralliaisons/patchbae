@@ -60,7 +60,7 @@ drawRows size i patch =
             [ Element.padding Style.paddingTiny
             , Element.spacing Style.paddingMedium
             ]
-            [ drawTextInput (getHeader i Txt.instrument) patch.instrument (SetPatchInstrument patch)
+            [ drawTextInput (getHeader i Txt.instrument) (String.fromInt patch.id) (SetPatchInstrument patch)
             , drawTextInput (getHeader i Txt.category) patch.category (SetPatchCategory patch)
             , drawTextInput (getHeader i Txt.address) patch.address (SetPatchAddress patch)
             , drawTextInput (getHeader i Txt.name) patch.name (SetPatchName patch)

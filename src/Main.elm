@@ -37,7 +37,8 @@ init flags url key =
   let 
     -- we're about to get the real size
     size = Nothing
-    model = Model key size [initPatch]
+    scratchPatch = initPatch
+    model = Model key size scratchPatch.id [scratchPatch]
   in
     ( model
     -- TODO: does this cause model / url parsing to happen twice?
@@ -144,23 +145,20 @@ update msg model =
     
     AddPatch ->
       let
-        newID = List.length model.patches + 1
+        lastID = model.lastID
+        newID = lastID + 1
         newPatch = {initPatch | id = newID}
         -- Add an initialized element at the beginning of the list of all patches
         patches1 = 
           newPatch :: model.patches
 
       in
-        ( {model | patches = patches1}
+        ( {model | lastID = newID, patches = patches1}
         , Cmd.none)
     
     RmPatch patch ->
       let
-        i = patch.id
-        patches1 = model.patches
-          |> Array.fromList 
-          |> A.removeAt i
-          |> Array.toList
+        patches1 = List.filter (\{id} -> id /= patch.id) model.patches
 
       in
         ( {model | patches = patches1}
