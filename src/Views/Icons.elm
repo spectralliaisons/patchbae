@@ -28,10 +28,10 @@ button evt icon =
     , onPress = evt
     }
 
-btnAdd : Maybe msg -> Element.Element msg
-btnAdd cmd = 
-    button cmd
-    <| Filled.add_circle Style.heightRow colorButton
+btnAdd : Bool -> Maybe msg -> Element.Element msg
+btnAdd enabled cmd = 
+    if enabled then button cmd <| Filled.add_circle Style.heightRow colorButton
+    else Element.none
 
 btnRm : Maybe msg -> Element.Element msg
 btnRm cmd = 

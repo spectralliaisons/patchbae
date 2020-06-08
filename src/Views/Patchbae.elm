@@ -1,6 +1,6 @@
 module Views.Patchbae exposing (..)
 
-import Models.Patchbae exposing (Patch)
+import Models.Patchbae exposing (Patch, uniquelyValid)
 import Models.Txt as Txt
 import Models.Style as Style exposing (Size)
 import Msg.Patchbae exposing (Msg(..))
@@ -15,6 +15,7 @@ import Element.Input as Input
 import Element.Font as Font
 
 import Debug exposing (log)
+import Models.Txt exposing (category)
 
 maxRating : Int
 maxRating = 5
@@ -26,7 +27,7 @@ view s patches = Element.layout [] <|
         Just size ->
             let
                 els = 
-                    List.indexedMap (drawRows size) patches
+                    List.indexedMap (drawRows size patches) patches
                     |> List.append [ drawTitle ]
             in
                 Element.column
@@ -46,13 +47,13 @@ drawTitle =
     ]
     (Element.text Txt.title)
 
-drawRows : Size -> Int -> Patch -> Element.Element Msg
-drawRows size i patch =
+drawRows : Size -> List Patch -> Int -> Patch -> Element.Element Msg
+drawRows size patches i patch =
     let
         -- only the top row has headers
         controls =
             if i == 0 then
-                drawButtonAddPatch
+                drawButtonAddPatch <| uniquelyValid patch patches
             else
                 drawButtonRmPatch patch
     in
@@ -60,7 +61,7 @@ drawRows size i patch =
             [ Element.padding Style.paddingTiny
             , Element.spacing Style.paddingMedium
             ]
-            [ drawTextInput (getHeader i Txt.instrument) (String.fromInt patch.id) (SetPatchInstrument patch)
+            [ drawTextInput (getHeader i Txt.instrument) patch.instrument (SetPatchInstrument patch)
             , drawTextInput (getHeader i Txt.category) patch.category (SetPatchCategory patch)
             , drawTextInput (getHeader i Txt.address) patch.address (SetPatchAddress patch)
             , drawTextInput (getHeader i Txt.name) patch.name (SetPatchName patch)
@@ -90,8 +91,12 @@ drawTextInput l txt cmd =
             , Element.width <| Element.px Style.widthColInstrument
             , Element.height <| Element.px Style.heightRow
             , Background.color <| elmUIColorFromHex Style.colorInputBg
+            -- TODO: border when clicked
             , Border.rounded Style.borderRoundingLg
             , Border.width Style.widthBorderInput
+            , Element.focused 
+                [ 
+                ]
             ]
             { onChange = cmd
             , text = txt
@@ -134,14 +139,14 @@ drawRating l patch =
                 stars 
             ]
 
-drawButtonAddPatch : Element.Element Msg
-drawButtonAddPatch =
+drawButtonAddPatch : Bool -> Element.Element Msg
+drawButtonAddPatch addable =
    Element.el
     [ Element.padding Style.paddingMedium
     , Element.moveDown <| toFloat Style.heightRow / 4
     , Element.moveLeft <| toFloat Style.heightRow / 2
     ]
-    (Icons.btnAdd <| Just AddPatch)
+    (Icons.btnAdd addable <| Just AddPatch)
 
 drawButtonRmPatch : Patch -> Element.Element Msg
 drawButtonRmPatch patch =

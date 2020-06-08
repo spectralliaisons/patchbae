@@ -24,7 +24,7 @@ colorBg : String
 colorBg = "#1d1d1d"
 
 colorSystemFont : String
-colorSystemFont = "#9d9d9d"
+colorSystemFont = "#a3a091"
 
 colorInputBg : String
 colorInputBg = "#1d1d1d"
