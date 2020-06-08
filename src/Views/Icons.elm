@@ -30,8 +30,12 @@ button evt icon =
 
 btnAdd : Bool -> Maybe msg -> Element.Element msg
 btnAdd enabled cmd = 
-    if enabled then button cmd <| Filled.add_circle Style.heightRow colorButton
-    else Element.none
+    if enabled then 
+        button cmd 
+        <| Filled.add_circle Style.heightRow colorButton
+    else 
+        button Nothing 
+        <| Filled.add_circle Style.heightRow <| Color <| fromHex Style.colorBg
 
 btnRm : Maybe msg -> Element.Element msg
 btnRm cmd = 
