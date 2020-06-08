@@ -14,6 +14,8 @@ import Element.Border as Border
 import Element.Input as Input
 import Element.Font as Font
 
+import Debug exposing (log)
+
 view : Maybe Size -> List Patch -> Html Msg
 view s patches = Element.layout [] <|
     case s of
@@ -21,9 +23,8 @@ view s patches = Element.layout [] <|
         Just size ->
             let
                 els = 
-                    List.append
-                        (drawTitle :: (List.indexedMap (drawRows size) patches))
-                        [drawButtonAddPatch]
+                    List.indexedMap (drawRows size) patches
+                    |> List.append [ drawTitle ]
             in
                 Element.column
                     []
@@ -43,15 +44,24 @@ drawTitle =
 
 drawRows : Size -> Int -> Patch -> Element.Element Msg
 drawRows size i patch =
-    Element.row
-        [ Element.padding Style.paddingMedium
-        , Element.spacing Style.paddingMedium
-        ]
-        [ drawTextInput Txt.instrument patch.instrument (SetPatchInstrument patch)
-        , drawTextInput Txt.category patch.category (SetPatchCategory patch)
-        , drawTextInput Txt.address patch.address (SetPatchAddress patch)
-        , drawTextInput Txt.name patch.name (SetPatchAddress patch)
-        ]
+    let
+        _ = log "drawRows i" i
+        controls =
+            if i == 0 then
+                drawButtonAddPatch
+            else
+                drawButtonRmPatch patch
+    in
+        Element.row
+            [ Element.padding Style.paddingMedium
+            , Element.spacing Style.paddingMedium
+            ]
+            [ drawTextInput Txt.instrument patch.instrument (SetPatchInstrument patch)
+            , drawTextInput Txt.category patch.category (SetPatchCategory patch)
+            , drawTextInput Txt.address patch.address (SetPatchAddress patch)
+            , drawTextInput Txt.name patch.name (SetPatchAddress patch)
+            , controls
+            ]
 
 drawTextInput : String -> String -> (String -> Msg) -> Element.Element Msg
 drawTextInput label txt cmd =
@@ -87,5 +97,14 @@ drawButtonAddPatch : Element.Element Msg
 drawButtonAddPatch =
    Element.el
     [ Element.padding Style.paddingMedium
+    , Element.height <| Element.px Style.heightRow
     ]
     (Icons.btnAdd <| Just AddPatch)
+
+drawButtonRmPatch : Patch -> Element.Element Msg
+drawButtonRmPatch patch =
+   Element.el
+    [ Element.padding Style.paddingMedium
+    , Element.height <| Element.px Style.heightRow
+    ]
+    (Icons.btnRm <| Just <| RmPatch patch)

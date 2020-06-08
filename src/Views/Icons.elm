@@ -32,3 +32,8 @@ btnAdd : Maybe msg -> Element.Element msg
 btnAdd cmd = 
     button cmd
     <| Filled.add Style.sizeButton colorButton
+
+btnRm : Maybe msg -> Element.Element msg
+btnRm cmd = 
+    button cmd
+    <| Filled.remove Style.sizeButton colorButton

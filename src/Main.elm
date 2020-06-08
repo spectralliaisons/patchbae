@@ -9,6 +9,7 @@ import Browser.Dom as Dom exposing (Viewport, getViewport)
 import Url
 import Task
 import Array as Array
+import Array.Extra as A
 import Debug exposing (log)
 
 import Msg.Patchbae exposing (Msg(..))
@@ -144,6 +145,18 @@ update msg model =
       let
         patches1 = 
           List.reverse (initPatch :: model.patches)
+
+      in
+        ( {model | patches = patches1}
+        , Cmd.none)
+    
+    RmPatch patch ->
+      let
+        i = patch.id
+        patches1 = model.patches
+          |> Array.fromList 
+          |> A.removeAt i
+          |> Array.toList
 
       in
         ( {model | patches = patches1}

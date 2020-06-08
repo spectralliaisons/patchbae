@@ -17,3 +17,4 @@ type Msg
     | SetPatchAddress Patch String
     | SetPatchName Patch String
     | AddPatch
+    | RmPatch Patch
