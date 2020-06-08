@@ -27,7 +27,9 @@ view s patches = Element.layout [] <|
                     |> List.append [ drawTitle ]
             in
                 Element.column
-                    []
+                    [ Element.height <| Element.px size.height
+                    , Element.padding Style.paddingMedium
+                    ]
                     els
 
 drawTitle : Element.Element Msg
@@ -37,7 +39,6 @@ drawTitle =
     , Style.sizeFontMed
     , Style.fontFamilyPatch
     , Element.centerX
-    , Element.moveDown <| toFloat Style.paddingMedium
     , Element.padding Style.paddingMedium
     ]
     (Element.text Txt.title)
