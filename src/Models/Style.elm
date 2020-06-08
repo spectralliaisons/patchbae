@@ -8,6 +8,9 @@ type alias Size =
     , height : Int
     }
 
+smallScreen : Size -> Bool
+smallScreen {width} = width < 925
+
 fontFamilyPatch : Element.Attribute message
 fontFamilyPatch = 
   Font.family 
@@ -52,8 +55,8 @@ heightStar = 30
 spacingStars : Int
 spacingStars = -5
 
-widthColInstrument : Int
-widthColInstrument = 150
+widthColumn : Int
+widthColumn = 200
 
 borderRounding : Int
 borderRounding = 0

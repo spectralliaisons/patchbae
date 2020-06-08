@@ -16,6 +16,7 @@ import Element.Font as Font
 
 import Debug exposing (log)
 import Models.Txt exposing (category)
+import Element exposing (fill)
 
 maxRating : Int
 maxRating = 5
@@ -31,7 +32,8 @@ view s patches = Element.layout [] <|
                     |> List.append [ drawTitle ]
             in
                 Element.column
-                    [ Element.height <| Element.px size.height
+                    [ Element.width <| Element.px size.width
+                    , Element.height <| Element.px size.height
                     , Element.padding Style.paddingMedium
                     ]
                     els
@@ -50,6 +52,8 @@ drawTitle =
 drawRows : Size -> List Patch -> Int -> Patch -> Element.Element Msg
 drawRows size patches i patch =
     let
+        _ = log "drawRows size" size
+        which = if Style.smallScreen size then Element.column else Element.row
         topRow = i == 0
         -- only the top row has headers
         controls =
@@ -58,9 +62,10 @@ drawRows size patches i patch =
             else
                 drawButtonRmPatch patch
     in
-        Element.row
+        which
             [ Element.padding Style.paddingTiny
             , Element.spacing Style.paddingMedium
+            , Element.centerX
             ]
             [ drawTextInput topRow (getHeader i Txt.instrument) patch.instrument (SetPatchInstrument patch)
             , drawTextInput topRow (getHeader i Txt.category) patch.category (SetPatchCategory patch)
@@ -99,8 +104,6 @@ drawTextInput topRow l txt cmd =
             ([ Font.color <| elmUIColorFromHex Style.colorSystemFont
             , Style.sizeFontMed
             , Style.fontFamilyPatch
-            , Element.width <| Element.px Style.widthColInstrument
-            , Element.height <| Element.px Style.heightRow
             , Background.color <| elmUIColorFromHex Style.colorInputBg
             , Border.rounded Style.borderRounding
             , Border.widthEach
@@ -144,10 +147,12 @@ drawRating l patch =
             )
     in
         Element.column
-            []
+            [ Element.width <| Element.px Style.widthColumn
+            ]
             [ labl
             , Element.row
-                [ Element.spacing Style.spacingStars
+                [ Element.width <| Element.px Style.widthColumn
+                , Element.spacing Style.spacingStars
                 ]
                 stars 
             ]
