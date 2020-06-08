@@ -45,7 +45,7 @@ drawTitle =
 drawRows : Size -> Int -> Patch -> Element.Element Msg
 drawRows size i patch =
     let
-        _ = log "drawRows i" i
+        -- only the top row has headers
         controls =
             if i == 0 then
                 drawButtonAddPatch
@@ -53,36 +53,46 @@ drawRows size i patch =
                 drawButtonRmPatch patch
     in
         Element.row
-            [ Element.padding Style.paddingMedium
+            [ Element.padding Style.paddingTiny
             , Element.spacing Style.paddingMedium
             ]
-            [ drawTextInput Txt.instrument patch.instrument (SetPatchInstrument patch)
-            , drawTextInput Txt.category patch.category (SetPatchCategory patch)
-            , drawTextInput Txt.address patch.address (SetPatchAddress patch)
-            , drawTextInput Txt.name patch.name (SetPatchAddress patch)
+            [ drawTextInput (getHeader i Txt.instrument) patch.instrument (SetPatchInstrument patch)
+            , drawTextInput (getHeader i Txt.category) patch.category (SetPatchCategory patch)
+            , drawTextInput (getHeader i Txt.address) patch.address (SetPatchAddress patch)
+            , drawTextInput (getHeader i Txt.name) patch.name (SetPatchAddress patch)
             , controls
             ]
 
-drawTextInput : String -> String -> (String -> Msg) -> Element.Element Msg
-drawTextInput label txt cmd =
-    Input.text
-        [ Font.color <| elmUIColorFromHex Style.colorSystemFont
-        , Style.sizeFontMed
-        , Style.fontFamilyPatch
-        , Element.width <| Element.px Style.widthColInstrument
-        , Element.height <| Element.px Style.heightRow
-        , Background.color <| elmUIColorFromHex Style.colorInputBg
-        , Border.rounded Style.borderRoundingLg
-        , Border.width Style.widthBorderInput
-        ]
-        { onChange = cmd
-        , text = txt
-        , placeholder = Nothing
-        , label = Input.labelAbove 
-            [ Element.centerX
-            ] 
-            <| text_ label
-        }
+getHeader : Int -> String -> Maybe String
+getHeader i s = if i == 0 then Just s else Nothing
+
+drawTextInput : Maybe String -> String -> (String -> Msg) -> Element.Element Msg
+drawTextInput l txt cmd =
+    let
+        labl = case l of
+            Nothing -> 
+                Input.labelHidden ""
+            Just str -> 
+                Input.labelAbove 
+                    [ Element.centerX
+                    ] 
+                    <| text_ str
+    in
+        Input.text
+            [ Font.color <| elmUIColorFromHex Style.colorSystemFont
+            , Style.sizeFontMed
+            , Style.fontFamilyPatch
+            , Element.width <| Element.px Style.widthColInstrument
+            , Element.height <| Element.px Style.heightRow
+            , Background.color <| elmUIColorFromHex Style.colorInputBg
+            , Border.rounded Style.borderRoundingLg
+            , Border.width Style.widthBorderInput
+            ]
+            { onChange = cmd
+            , text = txt
+            , placeholder = Nothing
+            , label = labl
+            }
 
 text_ : String -> Element.Element Msg
 text_ str = 
