@@ -16,5 +16,6 @@ type Msg
     | SetPatchCategory Patch String
     | SetPatchAddress Patch String
     | SetPatchName Patch String
+    | SetPatchRating Patch Int
     | AddPatch
     | RmPatch Patch

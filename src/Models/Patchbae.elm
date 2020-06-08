@@ -31,7 +31,7 @@ initPatch = Patch
     "Lead" -- category
     "U4-P21" -- address
     "Lazerkitty" -- name
-    4 -- rating
+    1 -- rating
     (Set.fromList ["funny"]) -- tags
     (Set.fromList []) -- projects
     [] -- family

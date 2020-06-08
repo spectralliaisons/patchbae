@@ -20,14 +20,14 @@ fontFamilyPatch =
 -- COLORS
 --
 
-colorBgDark : String
-colorBgDark = "#1e1e1e"
+colorBg : String
+colorBg = "#1d1d1d"
 
 colorSystemFont : String
-colorSystemFont = "#eeeeee"
+colorSystemFont = "#9d9d9d"
 
 colorInputBg : String
-colorInputBg = "#000000"
+colorInputBg = "#1d1d1d"
 
 ------------------------------------
 --
@@ -39,6 +39,12 @@ sizeFontMed = Font.size 18
 
 heightRow : Int
 heightRow = 50
+
+heightStar : Int
+heightStar = 30
+
+spacingStars : Int
+spacingStars = -5
 
 widthColInstrument : Int
 widthColInstrument = 150

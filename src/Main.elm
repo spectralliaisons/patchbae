@@ -14,6 +14,7 @@ import Debug exposing (log)
 
 import Msg.Patchbae exposing (Msg(..))
 import Models.Patchbae exposing (Model, initPatch)
+import Models.Txt as Txt
 import Models.Style exposing (Size)
 import Views.Patchbae as PBV
 
@@ -143,8 +144,11 @@ update msg model =
     
     AddPatch ->
       let
+        newID = List.length model.patches + 1
+        newPatch = {initPatch | id = newID}
+        -- Add an initialized element at the beginning of the list of all patches
         patches1 = 
-          List.reverse (initPatch :: model.patches)
+          newPatch :: model.patches
 
       in
         ( {model | patches = patches1}
@@ -161,6 +165,20 @@ update msg model =
       in
         ( {model | patches = patches1}
         , Cmd.none)
+    
+    SetPatchRating patch rating ->
+      let
+        patches1 = model.patches
+          |> List.map (\p -> 
+            if p.id == patch.id then
+              {p | rating = rating}
+            else 
+              p
+          )
+      in 
+        ( {model | patches = patches1}
+        , Cmd.none
+        )
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.batch <|
@@ -169,10 +187,10 @@ subscriptions model = Sub.batch <|
 
 -- view : Model -> Browser.Document Msg
 view {size, patches} =
-  { title = ""
+  { title = Txt.title
   , body = 
     [ div 
-      [ style "background-color" "#000000" 
+      [ style "background-color" "#1d1d1d" 
       , style "overflow" "auto"
       ] 
       [ PBV.view size patches

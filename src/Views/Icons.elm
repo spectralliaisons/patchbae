@@ -21,7 +21,7 @@ button evt icon =
   Input.button
     [ Element.padding Style.paddingTiny
     , Element.mouseOver
-        [ Background.color <| elmUIColorFromHex Style.colorBgDark
+        [ Background.color <| elmUIColorFromHex Style.colorBg
         ]
     ]
     { label = Element.html icon
@@ -37,3 +37,13 @@ btnRm : Maybe msg -> Element.Element msg
 btnRm cmd = 
     button cmd
     <| Filled.remove_circle Style.heightRow colorButton
+
+btnStar : Int -> Int -> Maybe msg -> Element.Element msg
+btnStar i rating cmd =
+    let
+        which =
+            if i <= rating then Filled.star
+            else Filled.star_outline
+    in
+        button cmd
+        <| which Style.heightStar colorButton

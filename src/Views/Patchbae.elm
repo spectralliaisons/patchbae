@@ -16,6 +16,9 @@ import Element.Font as Font
 
 import Debug exposing (log)
 
+maxRating : Int
+maxRating = 5
+
 view : Maybe Size -> List Patch -> Html Msg
 view s patches = Element.layout [] <|
     case s of
@@ -60,7 +63,8 @@ drawRows size i patch =
             [ drawTextInput (getHeader i Txt.instrument) patch.instrument (SetPatchInstrument patch)
             , drawTextInput (getHeader i Txt.category) patch.category (SetPatchCategory patch)
             , drawTextInput (getHeader i Txt.address) patch.address (SetPatchAddress patch)
-            , drawTextInput (getHeader i Txt.name) patch.name (SetPatchAddress patch)
+            , drawTextInput (getHeader i Txt.name) patch.name (SetPatchName patch)
+            , drawRating (getHeader i Txt.rating) patch
             , controls
             ]
 
@@ -103,6 +107,32 @@ text_ str =
     , Style.fontFamilyPatch
     ]
     (Element.text str)
+
+drawRating : Maybe String -> Patch ->  Element.Element Msg
+drawRating l patch =
+    let
+        labl = case l of
+            Nothing -> 
+                Element.none
+            Just str -> 
+                Element.el
+                    [ Element.centerX
+                    ] 
+                    <| text_ str
+        stars =
+            List.range 1 maxRating
+            |> List.map (\i ->
+                Icons.btnStar i patch.rating <| Just <| SetPatchRating patch i
+            )
+    in
+        Element.column
+            []
+            [ labl
+            , Element.row
+                [ Element.spacing Style.spacingStars
+                ]
+                stars 
+            ]
 
 drawButtonAddPatch : Element.Element Msg
 drawButtonAddPatch =
