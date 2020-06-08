@@ -50,9 +50,10 @@ drawTitle =
 drawRows : Size -> List Patch -> Int -> Patch -> Element.Element Msg
 drawRows size patches i patch =
     let
+        topRow = i == 0
         -- only the top row has headers
         controls =
-            if i == 0 then
+            if topRow then
                 drawButtonAddPatch <| uniquelyValid patch patches
             else
                 drawButtonRmPatch patch
@@ -61,10 +62,10 @@ drawRows size patches i patch =
             [ Element.padding Style.paddingTiny
             , Element.spacing Style.paddingMedium
             ]
-            [ drawTextInput (getHeader i Txt.instrument) patch.instrument (SetPatchInstrument patch)
-            , drawTextInput (getHeader i Txt.category) patch.category (SetPatchCategory patch)
-            , drawTextInput (getHeader i Txt.address) patch.address (SetPatchAddress patch)
-            , drawTextInput (getHeader i Txt.name) patch.name (SetPatchName patch)
+            [ drawTextInput topRow (getHeader i Txt.instrument) patch.instrument (SetPatchInstrument patch)
+            , drawTextInput topRow (getHeader i Txt.category) patch.category (SetPatchCategory patch)
+            , drawTextInput topRow (getHeader i Txt.address) patch.address (SetPatchAddress patch)
+            , drawTextInput topRow (getHeader i Txt.name) patch.name (SetPatchName patch)
             , drawRating (getHeader i Txt.rating) patch
             , controls
             ]
@@ -72,8 +73,8 @@ drawRows size patches i patch =
 getHeader : Int -> String -> Maybe String
 getHeader i s = if i == 0 then Just s else Nothing
 
-drawTextInput : Maybe String -> String -> (String -> Msg) -> Element.Element Msg
-drawTextInput l txt cmd =
+drawTextInput : Bool -> Maybe String -> String -> (String -> Msg) -> Element.Element Msg
+drawTextInput topRow l txt cmd =
     let
         labl = case l of
             Nothing -> 
@@ -83,21 +84,33 @@ drawTextInput l txt cmd =
                     [ Element.centerX
                     ] 
                     <| text_ str
+        
+        attrFocused = 
+            [ Border.color <| elmUIColorFromHex Style.colorBorderFocused
+            ]
+
+        textAttributes = 
+            if topRow then attrFocused
+            else
+                [ Border.color <| elmUIColorFromHex Style.colorBorderUnfocused
+                ]
     in
         Input.text
-            [ Font.color <| elmUIColorFromHex Style.colorSystemFont
+            ([ Font.color <| elmUIColorFromHex Style.colorSystemFont
             , Style.sizeFontMed
             , Style.fontFamilyPatch
             , Element.width <| Element.px Style.widthColInstrument
             , Element.height <| Element.px Style.heightRow
             , Background.color <| elmUIColorFromHex Style.colorInputBg
-            -- TODO: border when clicked
-            , Border.rounded Style.borderRoundingLg
-            , Border.width Style.widthBorderInput
-            , Element.focused 
-                [ 
-                ]
-            ]
+            , Border.rounded Style.borderRounding
+            , Border.widthEach
+                { bottom = Style.widthBorderInput
+                , left = 0
+                , top = 0
+                , right = 0
+                }
+            , Element.mouseOver attrFocused
+            ] ++ textAttributes)
             { onChange = cmd
             , text = txt
             , placeholder = Nothing

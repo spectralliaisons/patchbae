@@ -26,8 +26,14 @@ colorBg = "#1d1d1d"
 colorSystemFont : String
 colorSystemFont = "#a3a091"
 
+colorBorderFocused : String
+colorBorderFocused = colorSystemFont
+
+colorBorderUnfocused : String
+colorBorderUnfocused = colorBg
+
 colorInputBg : String
-colorInputBg = "#1d1d1d"
+colorInputBg = colorBg
 
 ------------------------------------
 --
@@ -49,8 +55,8 @@ spacingStars = -5
 widthColInstrument : Int
 widthColInstrument = 150
 
-borderRoundingLg : Int
-borderRoundingLg = 50
+borderRounding : Int
+borderRounding = 0
 
 widthBorderInput : Int
 widthBorderInput = 2
