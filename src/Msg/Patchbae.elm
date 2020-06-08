@@ -16,3 +16,4 @@ type Msg
     | SetPatchCategory Patch String
     | SetPatchAddress Patch String
     | SetPatchName Patch String
+    | AddPatch

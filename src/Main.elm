@@ -139,6 +139,15 @@ update msg model =
         ( {model | patches = patches1}
         , Cmd.none
         )
+    
+    AddPatch ->
+      let
+        patches1 = 
+          List.reverse (initPatch :: model.patches)
+
+      in
+        ( {model | patches = patches1}
+        , Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.batch <|

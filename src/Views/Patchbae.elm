@@ -5,6 +5,7 @@ import Models.Txt as Txt
 import Models.Style as Style exposing (Size)
 import Msg.Patchbae exposing (Msg(..))
 import Utils.ColorUtils exposing (fromHex, elmUIColorFromHex)
+import Views.Icons as Icons
 
 import Html exposing (..)
 import Element
@@ -17,13 +18,31 @@ view : Maybe Size -> List Patch -> Html Msg
 view s patches = Element.layout [] <|
     case s of
         Nothing -> Element.none
-        Just size -> 
-            Element.column
-                []
-                (List.indexedMap (drawPatch size) patches)
+        Just size ->
+            let
+                els = 
+                    List.append
+                        (drawTitle :: (List.indexedMap (drawRows size) patches))
+                        [drawButtonAddPatch]
+            in
+                Element.column
+                    []
+                    els
 
-drawPatch : Size -> Int -> Patch -> Element.Element Msg
-drawPatch size i patch =
+drawTitle : Element.Element Msg
+drawTitle =
+  Element.el 
+    [ Font.color <| elmUIColorFromHex Style.colorSystemFont
+    , Style.sizeFontMed
+    , Style.fontFamilyPatch
+    , Element.centerX
+    , Element.moveDown <| toFloat Style.paddingMedium
+    , Element.padding Style.paddingMedium
+    ]
+    (Element.text Txt.title)
+
+drawRows : Size -> Int -> Patch -> Element.Element Msg
+drawRows size i patch =
     Element.row
         [ Element.padding Style.paddingMedium
         , Element.spacing Style.paddingMedium
@@ -63,3 +82,10 @@ text_ str =
     , Style.fontFamilyPatch
     ]
     (Element.text str)
+
+drawButtonAddPatch : Element.Element Msg
+drawButtonAddPatch =
+   Element.el
+    [ Element.padding Style.paddingMedium
+    ]
+    (Icons.btnAdd <| Just AddPatch)

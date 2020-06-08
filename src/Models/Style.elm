@@ -20,6 +20,9 @@ fontFamilyPatch =
 -- COLORS
 --
 
+colorBgDark : String
+colorBgDark = "#1e1e1e"
+
 colorSystemFont : String
 colorSystemFont = "#eeeeee"
 
@@ -33,6 +36,9 @@ colorInputBg = "#000000"
 
 sizeFontMed : Element.Attr decorative message
 sizeFontMed = Font.size 18
+
+sizeButton : Int
+sizeButton = 22
 
 heightRow : Int
 heightRow = 50
@@ -48,3 +54,6 @@ widthBorderInput = 2
 
 paddingMedium : Int
 paddingMedium = 25
+
+paddingTiny : Int
+paddingTiny = 5
