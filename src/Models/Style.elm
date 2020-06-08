@@ -37,9 +37,6 @@ colorInputBg = "#000000"
 sizeFontMed : Element.Attr decorative message
 sizeFontMed = Font.size 18
 
-sizeButton : Int
-sizeButton = 22
-
 heightRow : Int
 heightRow = 50
 

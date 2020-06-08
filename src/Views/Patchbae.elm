@@ -108,7 +108,8 @@ drawButtonAddPatch : Element.Element Msg
 drawButtonAddPatch =
    Element.el
     [ Element.padding Style.paddingMedium
-    , Element.height <| Element.px Style.heightRow
+    , Element.moveDown <| toFloat Style.heightRow / 4
+    , Element.moveLeft <| toFloat Style.heightRow / 2
     ]
     (Icons.btnAdd <| Just AddPatch)
 
@@ -116,6 +117,7 @@ drawButtonRmPatch : Patch -> Element.Element Msg
 drawButtonRmPatch patch =
    Element.el
     [ Element.padding Style.paddingMedium
-    , Element.height <| Element.px Style.heightRow
+    , Element.moveDown <| toFloat Style.heightRow / 4
+    , Element.moveLeft <| toFloat Style.heightRow / 2
     ]
     (Icons.btnRm <| Just <| RmPatch patch)
