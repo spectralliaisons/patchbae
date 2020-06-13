@@ -9,7 +9,11 @@ _Family_: Variations of one root patch.
 
 _Friends_: What sounds good together?
 
-## E.G.
+## recent screenshot
+
+![an image examplar](./screenshot.png)
+
+### Goal:
 Filter: [#     ]
 
 Instrument | Category | Address | Name | Rating | Tags | Projects | Family | Friends|
