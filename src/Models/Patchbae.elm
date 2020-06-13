@@ -42,7 +42,7 @@ initPatch = Patch
     [] -- family
     [] -- friends
 
-type Sortable = SortByInstrument | SortByCategory | SortByAddress | SortByName | SortByRating | DefaultSort
+type Sortable = SortByInstrument | SortByCategory | SortByAddress | SortByName | SortByRating | DontSort
 
 -- True if this patch would not conflict with existing entries
 isUnique : Patch -> List Patch -> Bool
@@ -71,4 +71,8 @@ sortBy : Patches -> Sortable -> Patches
 sortBy patches how =
     case how of
         SortByInstrument -> patches
-        _ -> patches
+        SortByCategory -> patches
+        SortByAddress -> patches
+        SortByName -> patches
+        SortByRating -> patches
+        DontSort -> patches

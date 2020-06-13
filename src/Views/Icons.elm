@@ -51,3 +51,8 @@ btnStar i rating cmd =
     in
         button cmd
         <| which Style.heightStar colorButton
+
+iconSort : Element.Element msg
+iconSort =
+    Element.html
+    <| Filled.sort Style.heightIconSort colorButton

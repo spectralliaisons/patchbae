@@ -137,7 +137,15 @@ button_ str msg =
             [ Background.color <| elmUIColorFromHex Style.colorBg
             ]
         ]
-        { label = text_ str
+        { label = 
+            Element.row
+                []
+                [ text_ str
+                , Element.el
+                    [ Element.moveRight <| toFloat Style.paddingTiny
+                    ]
+                    Icons.iconSort
+                ]
         , onPress = msg
         }
 
