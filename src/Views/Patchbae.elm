@@ -158,19 +158,18 @@ drawRating l patch =
 
 drawButtonAddPatch : Bool -> Element.Element Msg
 drawButtonAddPatch addable =
-    let _ = log "drawButtonAddPatch addable" addable
-    in Element.el
+    Element.el
         [ Element.padding Style.paddingMedium
         , Element.moveDown <| toFloat Style.heightRow / 4
-        , Element.moveLeft <| toFloat Style.heightRow / 2
+        , Element.centerX
         ]
         (Icons.btnAdd addable <| Just AddPatch)
 
 drawButtonRmPatch : Patch -> Element.Element Msg
 drawButtonRmPatch patch =
-   Element.el
-    [ Element.padding Style.paddingMedium
-    , Element.moveDown <| toFloat Style.heightRow / 4
-    , Element.moveLeft <| toFloat Style.heightRow / 2
-    ]
-    (Icons.btnRm <| Just <| RmPatch patch)
+    Element.el
+        [ Element.padding Style.paddingMedium
+        , Element.moveDown <| toFloat Style.heightRow / 4
+        , Element.centerX
+        ]
+        (Icons.btnRm <| Just <| RmPatch patch)
