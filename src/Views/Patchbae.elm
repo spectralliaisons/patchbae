@@ -1,6 +1,6 @@
 module Views.Patchbae exposing (..)
 
-import Models.Patchbae exposing (Patch, uniquelyValid)
+import Models.Patchbae exposing (Patch, isUnique)
 import Models.Txt as Txt
 import Models.Style as Style exposing (Size)
 import Msg.Patchbae exposing (Msg(..))
@@ -52,13 +52,12 @@ drawTitle =
 drawRows : Size -> List Patch -> Int -> Patch -> Element.Element Msg
 drawRows size patches i patch =
     let
-        _ = log "drawRows size" size
         which = if Style.smallScreen size then Element.column else Element.row
         topRow = i == 0
         -- only the top row has headers
         controls =
             if topRow then
-                drawButtonAddPatch <| uniquelyValid patch patches
+                drawButtonAddPatch <| isUnique patch patches
             else
                 drawButtonRmPatch patch
     in
@@ -159,12 +158,13 @@ drawRating l patch =
 
 drawButtonAddPatch : Bool -> Element.Element Msg
 drawButtonAddPatch addable =
-   Element.el
-    [ Element.padding Style.paddingMedium
-    , Element.moveDown <| toFloat Style.heightRow / 4
-    , Element.moveLeft <| toFloat Style.heightRow / 2
-    ]
-    (Icons.btnAdd addable <| Just AddPatch)
+    let _ = log "drawButtonAddPatch addable" addable
+    in Element.el
+        [ Element.padding Style.paddingMedium
+        , Element.moveDown <| toFloat Style.heightRow / 4
+        , Element.moveLeft <| toFloat Style.heightRow / 2
+        ]
+        (Icons.btnAdd addable <| Just AddPatch)
 
 drawButtonRmPatch : Patch -> Element.Element Msg
 drawButtonRmPatch patch =

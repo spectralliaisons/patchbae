@@ -41,18 +41,21 @@ initPatch = Patch
     [] -- family
     [] -- friends
 
-uniquelyValid : Patch -> List Patch -> Bool
-uniquelyValid patchA patches =
-    let 
-        notInitial = 
-            patchA.instrument /= initPatch.instrument &&
-            patchA.category /= initPatch.category &&
-            patchA.address /= initPatch.address &&
-            patchA.name /= initPatch.name
-    in 
-        patches
-        |> List.filter (\{id} -> id /= patchA.id)
-        |> List.foldl (\patchB acc -> acc && different patchA patchB) notInitial
+-- True if this patch would not conflict with existing entries
+isUnique : Patch -> List Patch -> Bool
+isUnique patchA patches =
+    if List.length patches == 1 then True
+    else
+        let 
+            notInitial = 
+                patchA.instrument /= initPatch.instrument &&
+                patchA.category /= initPatch.category &&
+                patchA.address /= initPatch.address &&
+                patchA.name /= initPatch.name
+        in 
+            patches
+            |> List.filter (\{id} -> id /= patchA.id)
+            |> List.foldl (\patchB acc -> acc && different patchA patchB) notInitial
 
 different : Patch -> Patch -> Bool
 different patchA patchB =

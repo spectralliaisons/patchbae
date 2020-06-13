@@ -34,8 +34,6 @@
 
                     try {
                         var cachedPatches = load();
-
-                        console.log("cache.js cachedPatches: " + JSON.stringify(cachedPatches));
                         
                         app.ports.receive.send(cachedPatches);
                         // else {
