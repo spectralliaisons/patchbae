@@ -1,7 +1,6 @@
 module Models.Patchbae exposing (..)
 
 import Browser.Navigation as Navigation
-import Set exposing (Set)
 
 import Models.Style exposing (Size)
 
@@ -21,11 +20,13 @@ type alias Patch =
     , address : String
     , name : String
     , rating : Int
-    , tags : Set String
-    , projects : Set String
+    , tags : List String
+    , projects : List String
     , family : List Int
     , friends : List Int
     }
+
+type alias Patches = List Patch
 
 initPatch : Patch
 initPatch = Patch
@@ -34,9 +35,9 @@ initPatch = Patch
     "" -- category
     "" -- address
     "" -- name
-    1 -- rating
-    (Set.fromList []) -- tags
-    (Set.fromList []) -- projects
+    2 -- rating
+    [] -- tags
+    [] -- projects
     [] -- family
     [] -- friends
 

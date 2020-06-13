@@ -1,4 +1,4 @@
-module Main exposing (init, update)
+port module Main exposing (init, update)
 
 import Html exposing (..)
 import Html.Attributes exposing (style)
@@ -13,13 +13,20 @@ import Array.Extra as A
 import Debug exposing (log)
 
 import Msg.Patchbae exposing (Msg(..))
-import Models.Patchbae exposing (Model, initPatch)
+import Models.Patchbae exposing (Model, initPatch, Patches)
 import Models.Txt as Txt
 import Models.Style exposing (Size)
+import Models.Api as Api
 import Views.Patchbae as PBV
 
 type alias Flags =
   {}
+
+-- Elm requests historic performance data
+port cached : Patches -> Cmd msg
+
+-- cache.js provides historic performance data
+port receive : (Patches -> msg) -> Sub msg
 
 main : Program Flags Model Msg
 main =
@@ -79,7 +86,8 @@ update msg model =
 
     Initialize size ->
       ( {model | size = Just size}
-      , Cmd.none
+      -- Load user data on init 
+      , cached <| model.patches
       )
 
     SetSize size ->
@@ -177,10 +185,21 @@ update msg model =
         ( {model | patches = patches1}
         , Cmd.none
         )
+    
+    -- Load user's patches
+    ReceivePatches patches ->
+      let
+        patches1 = case patches of
+            [] -> [initPatch]
+            _ -> patches
+      in ( {model | patches = patches1}
+      , Cmd.none
+      )
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.batch <|
   [ Events.onResize (\w h -> SetSize <| Size w h)
+  , receive ReceivePatches
   ]
 
 -- view : Model -> Browser.Document Msg
