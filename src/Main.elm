@@ -16,7 +16,6 @@ import Msg.Patchbae exposing (Msg(..))
 import Models.Patchbae exposing (Model, initPatch, Patches)
 import Models.Txt as Txt
 import Models.Style exposing (Size)
-import Models.Api as Api
 import Views.Patchbae as PBV
 
 type alias Flags =
@@ -156,8 +155,8 @@ update msg model =
     
     AddPatch ->
       let
-        lastID = model.lastID
-        newID = lastID + 1
+        lastID = Maybe.withDefault 0 <| String.toInt <| model.lastID
+        newID = String.fromInt <| lastID + 1
         newPatch = {initPatch | id = newID}
         -- Add an initialized element at the beginning of the list of all patches
         patches1 = 

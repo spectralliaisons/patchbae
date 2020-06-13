@@ -9,12 +9,12 @@ import Debug exposing (log)
 type alias Model =
     { key : Navigation.Key
     , size : Maybe Size
-    , lastID : Int
+    , lastID : String
     , patches : List Patch
     }
 
 type alias Patch = 
-    { id : Int
+    { id : String
     , instrument : String
     , category : String
     , address : String
@@ -30,7 +30,7 @@ type alias Patches = List Patch
 
 initPatch : Patch
 initPatch = Patch
-    0 -- id
+    "unset" -- id
     "" -- instrument
     "" -- category
     "" -- address
