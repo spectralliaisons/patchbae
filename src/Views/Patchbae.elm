@@ -62,8 +62,8 @@ drawRows size patches i patch =
                 drawButtonRmPatch patch
     in
         which
-            [ Element.padding Style.paddingTiny
-            , Element.spacing Style.paddingMedium
+            [ Element.spacing Style.paddingMedium
+            , Element.padding Style.paddingTiny
             , Element.centerX
             ]
             [ drawTextInput topRow (getHeader i Txt.instrument) patch.instrument (SetPatchInstrument patch)
@@ -159,8 +159,8 @@ drawRating l patch =
 drawButtonAddPatch : Bool -> Element.Element Msg
 drawButtonAddPatch addable =
     Element.el
-        [ Element.padding Style.paddingMedium
-        , Element.moveDown <| toFloat Style.heightRow / 4
+        -- [ Element.padding Style.paddingMedium
+        [ Element.moveDown <| toFloat Style.heightButton / 4
         , Element.centerX
         ]
         (Icons.btnAdd addable <| Just AddPatch)
@@ -168,8 +168,8 @@ drawButtonAddPatch addable =
 drawButtonRmPatch : Patch -> Element.Element Msg
 drawButtonRmPatch patch =
     Element.el
-        [ Element.padding Style.paddingMedium
-        , Element.moveDown <| toFloat Style.heightRow / 4
+        -- [ Element.padding Style.paddingMedium
+        [ Element.moveDown <| toFloat Style.heightButton / 4
         , Element.centerX
         ]
         (Icons.btnRm <| Just <| RmPatch patch)

@@ -32,15 +32,15 @@ btnAdd : Bool -> Maybe msg -> Element.Element msg
 btnAdd enabled cmd = 
     if enabled then 
         button cmd 
-        <| Filled.add_circle Style.heightRow colorButton
+        <| Filled.add_circle Style.heightButton colorButton
     else 
         button Nothing 
-        <| Filled.add_circle Style.heightRow <| Color <| fromHex Style.colorBg
+        <| Filled.add_circle Style.heightButton <| Color <| fromHex Style.colorBg
 
 btnRm : Maybe msg -> Element.Element msg
 btnRm cmd = 
     button cmd
-    <| Filled.remove_circle Style.heightRow colorButton
+    <| Filled.remove_circle Style.heightButton colorButton
 
 btnStar : Int -> Int -> Maybe msg -> Element.Element msg
 btnStar i rating cmd =

@@ -47,7 +47,10 @@ sizeFontMed : Element.Attr decorative message
 sizeFontMed = Font.size 18
 
 heightRow : Int
-heightRow = 50
+heightRow = 60
+
+heightButton : Int
+heightButton = 40
 
 heightStar : Int
 heightStar = 30
