@@ -1,6 +1,6 @@
 module Msg.Patchbae exposing (Msg(..))
 
-import Models.Patchbae exposing (Patch, Patches)
+import Models.Patchbae exposing (Patch, Patches, Sortable(..))
 import Models.Style exposing (Size)
 
 import Url
@@ -20,3 +20,4 @@ type Msg
     | AddPatch
     | RmPatch Patch
     | ReceivePatches Patches
+    | SortBy Sortable

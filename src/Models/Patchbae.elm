@@ -3,6 +3,7 @@ module Models.Patchbae exposing (..)
 import Browser.Navigation as Navigation
 
 import Models.Style exposing (Size)
+import Models.Txt as Txt
 
 import Debug exposing (log)
 
@@ -41,6 +42,8 @@ initPatch = Patch
     [] -- family
     [] -- friends
 
+type Sortable = SortByInstrument | SortByCategory | SortByAddress | SortByName | SortByRating | DefaultSort
+
 -- True if this patch would not conflict with existing entries
 isUnique : Patch -> List Patch -> Bool
 isUnique patchA patches =
@@ -63,3 +66,9 @@ different patchA patchB =
     patchA.category /= patchB.category ||
     patchA.address /= patchB.address ||
     patchA.name /= patchB.name
+
+sortBy : Patches -> Sortable -> Patches
+sortBy patches how =
+    case how of
+        SortByInstrument -> patches
+        _ -> patches

@@ -1,6 +1,6 @@
 module Views.Patchbae exposing (..)
 
-import Models.Patchbae exposing (Patch, isUnique)
+import Models.Patchbae exposing (Patch, isUnique, Sortable(..))
 import Models.Txt as Txt
 import Models.Style as Style exposing (Size)
 import Msg.Patchbae exposing (Msg(..))
@@ -17,6 +17,7 @@ import Element.Font as Font
 import Debug exposing (log)
 import Models.Txt exposing (category)
 import Element exposing (fill)
+import Html.Events exposing (onSubmit)
 
 maxRating : Int
 maxRating = 5
@@ -66,19 +67,19 @@ drawRows size patches i patch =
             , Element.padding Style.paddingTiny
             , Element.centerX
             ]
-            [ drawTextInput topRow (getHeader i Txt.instrument) patch.instrument (SetPatchInstrument patch)
-            , drawTextInput topRow (getHeader i Txt.category) patch.category (SetPatchCategory patch)
-            , drawTextInput topRow (getHeader i Txt.address) patch.address (SetPatchAddress patch)
-            , drawTextInput topRow (getHeader i Txt.name) patch.name (SetPatchName patch)
-            , drawRating (getHeader i Txt.rating) patch
+            [ drawTextInput topRow (getHeader i Txt.instrument) SortByInstrument patch.instrument (SetPatchInstrument patch)
+            , drawTextInput topRow (getHeader i Txt.category) SortByCategory patch.category (SetPatchCategory patch)
+            , drawTextInput topRow (getHeader i Txt.address) SortByAddress patch.address (SetPatchAddress patch)
+            , drawTextInput topRow (getHeader i Txt.name) SortByName patch.name (SetPatchName patch)
+            , drawRating (getHeader i Txt.rating) SortByRating patch
             , controls
             ]
 
 getHeader : Int -> String -> Maybe String
 getHeader i s = if i == 0 then Just s else Nothing
 
-drawTextInput : Bool -> Maybe String -> String -> (String -> Msg) -> Element.Element Msg
-drawTextInput topRow l txt cmd =
+drawTextInput : Bool -> Maybe String -> Sortable -> String -> (String -> Msg) -> Element.Element Msg
+drawTextInput topRow l howToSort txt cmd =
     let
         labl = case l of
             Nothing -> 
@@ -87,7 +88,7 @@ drawTextInput topRow l txt cmd =
                 Input.labelAbove 
                     [ Element.centerX
                     ] 
-                    <| text_ str
+                    <| button_ str (Just <| SortBy howToSort)
         
         attrFocused = 
             [ Border.color <| elmUIColorFromHex Style.colorBorderFocused
@@ -128,8 +129,20 @@ text_ str =
     ]
     (Element.text str)
 
-drawRating : Maybe String -> Patch ->  Element.Element Msg
-drawRating l patch =
+button_ : String -> Maybe Msg -> Element.Element Msg
+button_ str msg =
+    Input.button
+        [ Element.padding Style.paddingTiny
+        , Element.mouseOver
+            [ Background.color <| elmUIColorFromHex Style.colorBg
+            ]
+        ]
+        { label = text_ str
+        , onPress = msg
+        }
+
+drawRating : Maybe String -> Sortable -> Patch ->  Element.Element Msg
+drawRating l howToSort patch =
     let
         labl = case l of
             Nothing -> 
@@ -138,7 +151,7 @@ drawRating l patch =
                 Element.el
                     [ Element.centerX
                     ] 
-                    <| text_ str
+                    <| button_ str (Just <| SortBy howToSort)
         stars =
             List.range 1 maxRating
             |> List.map (\i ->

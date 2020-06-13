@@ -13,7 +13,7 @@ import Array.Extra as A
 import Debug exposing (log)
 
 import Msg.Patchbae exposing (Msg(..))
-import Models.Patchbae exposing (Model, initPatch, Patches)
+import Models.Patchbae exposing (Model, initPatch, Patches, sortBy)
 import Models.Txt as Txt
 import Models.Style exposing (Size)
 import Views.Patchbae as PBV
@@ -198,6 +198,13 @@ update msg model =
             _ -> patches
       in ( {model | patches = patches1}
       , Cmd.none
+      )
+    
+    SortBy how ->
+      let
+        patches1 = sortBy model.patches how
+      in ( {model | patches = patches1}
+      , save patches1 -- why not remember the sort?
       )
 
 subscriptions : Model -> Sub Msg
