@@ -25,8 +25,11 @@ type alias Flags =
 -- Elm requests historic performance data
 port cached : Patches -> Cmd msg
 
--- cache.js provides historic performance data
+-- save.js provides historic performance data
 port receive : (Patches -> msg) -> Sub msg
+
+-- Elm wants to save the model
+port save : Patches -> Cmd msg
 
 main : Program Flags Model Msg
 main =
@@ -106,7 +109,7 @@ update msg model =
           )
       in 
         ( {model | patches = patches1}
-        , Cmd.none
+        , save patches1
         )
       
     SetPatchCategory patch category ->
@@ -120,7 +123,7 @@ update msg model =
           )
       in 
         ( {model | patches = patches1}
-        , Cmd.none
+        , save patches1
         )
     
     SetPatchAddress patch address ->
@@ -134,7 +137,7 @@ update msg model =
           )
       in 
         ( {model | patches = patches1}
-        , Cmd.none
+        , save patches1
         )
     
     SetPatchName patch name ->
@@ -148,7 +151,7 @@ update msg model =
           )
       in 
         ( {model | patches = patches1}
-        , Cmd.none
+        , save patches1
         )
     
     AddPatch ->
@@ -162,7 +165,8 @@ update msg model =
 
       in
         ( {model | lastID = newID, patches = patches1}
-        , Cmd.none)
+        , save patches1
+        )
     
     RmPatch patch ->
       let
@@ -170,7 +174,8 @@ update msg model =
 
       in
         ( {model | patches = patches1}
-        , Cmd.none)
+        , save patches1
+        )
     
     SetPatchRating patch rating ->
       let
@@ -183,7 +188,7 @@ update msg model =
           )
       in 
         ( {model | patches = patches1}
-        , Cmd.none
+        , save patches1
         )
     
     -- Load user's patches
