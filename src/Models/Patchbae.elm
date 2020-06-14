@@ -10,7 +10,6 @@ import Debug exposing (log)
 type alias Model =
     { key : Navigation.Key
     , size : Maybe Size
-    , lastID : String
     , patches : List Patch
     }
 
@@ -31,7 +30,7 @@ type alias Patches = List Patch
 
 initPatch : Patch
 initPatch = Patch
-    "unset" -- id
+    "" -- id
     "" -- instrument
     "" -- category
     "" -- address
@@ -42,7 +41,8 @@ initPatch = Patch
     [] -- family
     [] -- friends
 
-type Sortable = SortByInstrument | SortByCategory | SortByAddress | SortByName | SortByRating | DontSort
+type Direction = Up | Down | NoDirection
+type Sortable = SortByInstrument Direction | SortByCategory Direction | SortByAddress Direction | SortByName Direction | SortByRating Direction
 
 -- True if this patch would not conflict with existing entries
 isUnique : Patch -> List Patch -> Bool
@@ -67,12 +67,19 @@ different patchA patchB =
     patchA.address /= patchB.address ||
     patchA.name /= patchB.name
 
+mostRecentIDInt : Patches -> Int
+mostRecentIDInt patches =
+    patches
+    |> List.foldl (\{id} acc -> 
+        max acc <| Maybe.withDefault acc <| String.toInt id
+    ) 0
+
+
 sortBy : Patches -> Sortable -> Patches
 sortBy patches how =
     case how of
-        SortByInstrument -> patches
-        SortByCategory -> patches
-        SortByAddress -> patches
-        SortByName -> patches
-        SortByRating -> patches
-        DontSort -> patches
+        SortByInstrument direction -> patches
+        SortByCategory direction -> patches
+        SortByAddress direction -> patches
+        SortByName direction -> patches
+        SortByRating direction -> patches

@@ -13,7 +13,7 @@ import Array.Extra as A
 import Debug exposing (log)
 
 import Msg.Patchbae exposing (Msg(..))
-import Models.Patchbae exposing (Model, initPatch, Patches, sortBy)
+import Models.Patchbae exposing (Model, initPatch, Patches, sortBy, mostRecentIDInt)
 import Models.Txt as Txt
 import Models.Style exposing (Size)
 import Views.Patchbae as PBV
@@ -45,9 +45,7 @@ init : Flags -> Url.Url -> Navigation.Key -> (Model, Cmd Msg)
 init flags url key =
   let 
     -- we're about to get the real size
-    size = Nothing
-    scratchPatch = initPatch
-    model = Model key size scratchPatch.id [scratchPatch]
+    model = Model key Nothing [initPatch]
   in
     ( model
     -- TODO: does this cause model / url parsing to happen twice?
@@ -155,7 +153,7 @@ update msg model =
     
     AddPatch ->
       let
-        lastID = Maybe.withDefault 0 <| String.toInt <| model.lastID
+        lastID = mostRecentIDInt model.patches
         newID = String.fromInt <| lastID + 1
         newPatch = {initPatch | id = newID}
         -- Add an initialized element at the beginning of the list of all patches
@@ -163,7 +161,7 @@ update msg model =
           newPatch :: model.patches
 
       in
-        ( {model | lastID = newID, patches = patches1}
+        ( {model | patches = patches1}
         , save patches1
         )
     

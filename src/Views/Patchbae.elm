@@ -1,6 +1,6 @@
 module Views.Patchbae exposing (..)
 
-import Models.Patchbae exposing (Patch, isUnique, Sortable(..))
+import Models.Patchbae exposing (Patch, isUnique, Sortable(..), Direction(..))
 import Models.Txt as Txt
 import Models.Style as Style exposing (Size)
 import Msg.Patchbae exposing (Msg(..))
@@ -67,11 +67,18 @@ drawRows size patches i patch =
             , Element.padding Style.paddingTiny
             , Element.centerX
             ]
-            [ drawTextInput topRow (getHeader i Txt.instrument) SortByInstrument patch.instrument (SetPatchInstrument patch)
-            , drawTextInput topRow (getHeader i Txt.category) SortByCategory patch.category (SetPatchCategory patch)
-            , drawTextInput topRow (getHeader i Txt.address) SortByAddress patch.address (SetPatchAddress patch)
-            , drawTextInput topRow (getHeader i Txt.name) SortByName patch.name (SetPatchName patch)
-            , drawRating (getHeader i Txt.rating) SortByRating patch
+            [ Element.el 
+                [ Font.color <| elmUIColorFromHex Style.colorMutedFont
+                , Style.sizeFontSm
+                , Style.fontFamilyPatch
+                , Element.moveDown <| toFloat Style.paddingMedium
+                ]
+                (Element.text patch.id)
+            , drawTextInput topRow (getHeader i Txt.instrument) (SortByInstrument NoDirection) patch.instrument (SetPatchInstrument patch)
+            , drawTextInput topRow (getHeader i Txt.category) (SortByCategory NoDirection) patch.category (SetPatchCategory patch)
+            , drawTextInput topRow (getHeader i Txt.address) (SortByAddress NoDirection) patch.address (SetPatchAddress patch)
+            , drawTextInput topRow (getHeader i Txt.name) (SortByName NoDirection) patch.name (SetPatchName patch)
+            , drawRating (getHeader i Txt.rating) (SortByRating NoDirection) patch
             , controls
             ]
 

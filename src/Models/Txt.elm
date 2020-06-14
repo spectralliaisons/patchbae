@@ -3,6 +3,9 @@ module Models.Txt exposing (..)
 title : String
 title = "PatchBae"
 
+id : String
+id = "ID"
+
 instrument : String
 instrument = "instrument"
 

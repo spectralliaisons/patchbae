@@ -29,6 +29,9 @@ colorBg = "#1d1d1d"
 colorSystemFont : String
 colorSystemFont = "#a3a091"
 
+colorMutedFont : String
+colorMutedFont = "#525045"
+
 colorBorderFocused : String
 colorBorderFocused = colorSystemFont
 
@@ -46,6 +49,9 @@ colorInputBg = colorBg
 sizeFontMed : Element.Attr decorative message
 sizeFontMed = Font.size 18
 
+sizeFontSm : Element.Attr decorative message
+sizeFontSm = Font.size 14
+
 heightRow : Int
 heightRow = 60
 
@@ -59,7 +65,7 @@ spacingStars : Int
 spacingStars = -5
 
 widthColumn : Int
-widthColumn = 200
+widthColumn = 250
 
 borderRounding : Int
 borderRounding = 0
