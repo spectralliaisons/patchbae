@@ -13,7 +13,7 @@ _Friends_: What sounds good together?
 
 ![an image examplar](./examples/proofofconcept1.jpg)
 
-### Goal:
+### e.g.
 Filter: [#     ]
 
 Instrument | Category | Address | Name | Rating | Tags | Projects | Family | Friends|
