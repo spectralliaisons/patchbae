@@ -10,7 +10,9 @@
         
         var load = function() {
 
-            var out = [];
+            // var out = [];
+            // TODO: remove this
+            var out = initMyInstruments();
 
             try {
                 var cached = JSON.parse(localStorage.getItem(key));
@@ -22,6 +24,70 @@
 
             return out;
         };
+
+        // TODO: remove -- this is temporary and for me only!
+        var initMyInstruments = function() {
+
+            var out = [];
+
+            // add all program slots for Prophet Rev2
+
+            var prophetBanks = ["U1","U2","U3","U4"];
+            var prophetPrograms = 128;
+            var programSlots = _.range(1,prophetPrograms+1);
+
+            var count = -1;
+
+            _.forEach(prophetBanks, function(bank){
+                _.forEach(programSlots, function(program){
+
+                    count += 1;
+
+                    var sfx = String(program);
+                    if (sfx.length == 1) {
+                        sfx = "0" + sfx;
+                    }
+                    var address = bank + "-" + sfx;
+
+                    var patch = {
+                        id: "pb-" + String(count),
+                        instrument: "Prophet Rev2",
+                        category: "Pad",
+                        address: address,
+                        name: "XXX",
+                        rating: 1,
+                        tags: [],
+                        projects: [],
+                        family: [],
+                        friends: []
+                    };
+
+                    out.push(patch);
+                })
+            });
+
+            // add all program slots for Roland TR-8S
+
+            _.forEach(programSlots, function(program){
+                count += 1;
+                var patch = {
+                    id: "pb-" + String(count),
+                    instrument: "Roland TR-8S",
+                    category: "Kick",
+                    address: "Kit" + String(program),
+                    name: "XXX",
+                    rating: 1,
+                    tags: [],
+                    projects: [],
+                    family: [],
+                    friends: []
+                };
+
+                out.push(patch);
+            });
+
+            return out;
+        }
 
         var clear = function() {
             localStorage.setItem(key, undefined);

@@ -30,7 +30,7 @@ type alias Patches = List Patch
 
 initPatch : Patch
 initPatch = Patch
-    "" -- id
+    "0" -- id
     "" -- instrument
     "" -- category
     "" -- address
