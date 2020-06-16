@@ -11,7 +11,7 @@ _Friends_: What sounds good together?
 
 ## recent screenshot
 
-![an image examplar](./screenshot.png)
+![an image examplar](./examples/proofofconcept1.jpg)
 
 ### Goal:
 Filter: [#     ]
