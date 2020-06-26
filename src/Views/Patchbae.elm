@@ -9,6 +9,8 @@ import Views.Icons as Icons
 
 import Html exposing (..)
 import Element
+import Element.Keyed as Keyed
+import Element.Lazy as Lazy
 import Element.Background as Background
 import Element.Border as Border
 import Element.Input as Input
@@ -28,11 +30,17 @@ view s patches = Element.layout [] <|
         Nothing -> Element.none
         Just size ->
             let
+                els : List (String, Element.Element Msg)
                 els = 
-                    List.indexedMap (drawRows size patches) patches
-                    |> List.append [ drawTitle ]
+                    patches
+                    |> List.indexedMap (\i patch -> 
+                        ( "patch-row-" ++ String.fromInt i
+                        , Lazy.lazy4 drawRows size (isUnique patch patches) i patch
+                        )
+                    )
+                    |> List.append [ ("title", drawTitle) ]
             in
-                Element.column
+                Keyed.column
                     [ Element.width <| Element.px size.width
                     , Element.height <| Element.px size.height
                     , Element.padding Style.paddingMedium
@@ -50,35 +58,37 @@ drawTitle =
     ]
     (Element.text Txt.title)
 
-drawRows : Size -> List Patch -> Int -> Patch -> Element.Element Msg
-drawRows size patches i patch =
+drawRows : Size -> Bool -> Int -> Patch -> Element.Element Msg
+drawRows size unique i patch =
     let
         which = if Style.smallScreen size then Element.column else Element.row
         topRow = i == 0
+        drawID id =
+            Element.el 
+                [ Font.color <| elmUIColorFromHex Style.colorMutedFont
+                , Style.sizeFontSm
+                , Style.fontFamilyPatch
+                , Element.moveDown <| toFloat Style.paddingMedium
+                ]
+                (Element.text id)
         -- only the top row has headers
-        controls =
+        controls = 
             if topRow then
-                drawButtonAddPatch <| isUnique patch patches
+                Lazy.lazy drawButtonAddPatch unique
             else
-                drawButtonRmPatch patch
+                Lazy.lazy drawButtonRmPatch patch
     in
         which
             [ Element.spacing Style.paddingMedium
             , Element.padding Style.paddingTiny
             , Element.centerX
             ]
-            [ Element.el 
-                [ Font.color <| elmUIColorFromHex Style.colorMutedFont
-                , Style.sizeFontSm
-                , Style.fontFamilyPatch
-                , Element.moveDown <| toFloat Style.paddingMedium
-                ]
-                (Element.text patch.id)
-            , drawTextInput topRow (getHeader i Txt.instrument) (SortByInstrument NoDirection) patch.instrument (SetPatchInstrument patch)
-            , drawTextInput topRow (getHeader i Txt.category) (SortByCategory NoDirection) patch.category (SetPatchCategory patch)
-            , drawTextInput topRow (getHeader i Txt.address) (SortByAddress NoDirection) patch.address (SetPatchAddress patch)
-            , drawTextInput topRow (getHeader i Txt.name) (SortByName NoDirection) patch.name (SetPatchName patch)
-            , drawRating (getHeader i Txt.rating) (SortByRating NoDirection) patch
+            [ Lazy.lazy drawID patch.id
+            , Lazy.lazy5 drawTextInput topRow (getHeader i Txt.instrument) (SortByInstrument NoDirection) patch.instrument (SetPatchInstrument patch)
+            , Lazy.lazy5 drawTextInput topRow (getHeader i Txt.category) (SortByCategory NoDirection) patch.category (SetPatchCategory patch)
+            , Lazy.lazy5 drawTextInput topRow (getHeader i Txt.address) (SortByAddress NoDirection) patch.address (SetPatchAddress patch)
+            , Lazy.lazy5 drawTextInput topRow (getHeader i Txt.name) (SortByName NoDirection) patch.name (SetPatchName patch)
+            , Lazy.lazy3 drawRating (getHeader i Txt.rating) (SortByRating NoDirection) patch
             , controls
             ]
 
