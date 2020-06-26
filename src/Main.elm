@@ -10,13 +10,14 @@ import Url
 import Task
 import Array as Array
 import Array.Extra as A
+import InfiniteList
 import Debug exposing (log)
 
-import Msg.Patchbae exposing (Msg(..))
+import Msg.PatchMsg exposing (Msg(..))
 import Models.Patchbae exposing (Model, initPatch, Patches, sortBy, mostRecentIDInt)
 import Models.Txt as Txt
 import Models.Style exposing (Size)
-import Views.Patchbae as PBV
+import Views.PatchView as PBV
 
 type alias Flags =
   {}
@@ -45,7 +46,7 @@ init : Flags -> Url.Url -> Navigation.Key -> (Model, Cmd Msg)
 init flags url key =
   let 
     -- we're about to get the real size
-    model = Model key Nothing [initPatch]
+    model = Model InfiniteList.init key Nothing [initPatch]
   in
     ( model
     -- TODO: does this cause model / url parsing to happen twice?
@@ -204,6 +205,11 @@ update msg model =
       in ( {model | patches = patches1}
       , save patches1 -- why not remember the sort?
       )
+    
+    InfiniteListMsg infiniteList ->
+      ( { model | infiniteList = infiniteList }
+      , Cmd.none 
+      )
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.batch <|
@@ -212,14 +218,14 @@ subscriptions model = Sub.batch <|
   ]
 
 -- view : Model -> Browser.Document Msg
-view {size, patches} =
+view model =
   { title = Txt.title
   , body = 
     [ div 
       [ style "background-color" "#1d1d1d" 
-      , style "overflow" "auto"
+      , style "height" "100%"
       ] 
-      [ PBV.view size patches
+      [ PBV.view model
       ]
     ]
   }

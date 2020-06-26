@@ -3,12 +3,13 @@ module Models.Patchbae exposing (..)
 import Browser.Navigation as Navigation
 
 import Models.Style exposing (Size)
-import Models.Txt as Txt
 
+import InfiniteList
 import Debug exposing (log)
 
 type alias Model =
-    { key : Navigation.Key
+    { infiniteList : InfiniteList.Model
+    , key : Navigation.Key
     , size : Maybe Size
     , patches : List Patch
     }

@@ -1,11 +1,11 @@
-module Msg.Patchbae exposing (Msg(..))
+module Msg.PatchMsg exposing (Msg(..))
 
 import Models.Patchbae exposing (Patch, Patches, Sortable(..))
 import Models.Style exposing (Size)
 
+import InfiniteList
 import Url
 import Browser
-import Http
 
 type Msg
     = UrlRequested Browser.UrlRequest
@@ -21,3 +21,4 @@ type Msg
     | RmPatch Patch
     | ReceivePatches Patches
     | SortBy Sortable
+    | InfiniteListMsg InfiniteList.Model

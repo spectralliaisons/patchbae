@@ -1,13 +1,14 @@
-module Views.Patchbae exposing (..)
+module Views.PatchView exposing (..)
 
-import Models.Patchbae exposing (Patch, isUnique, Sortable(..), Direction(..))
+import Models.Patchbae exposing (Model, Patch, isUnique, Sortable(..), Direction(..))
 import Models.Txt as Txt
 import Models.Style as Style exposing (Size)
-import Msg.Patchbae exposing (Msg(..))
+import Msg.PatchMsg exposing (Msg(..))
 import Utils.ColorUtils exposing (fromHex, elmUIColorFromHex)
 import Views.Icons as Icons
 
 import Html exposing (..)
+import Html.Attributes exposing (style)
 import Element
 import Element.Keyed as Keyed
 import Element.Lazy as Lazy
@@ -20,32 +21,67 @@ import Debug exposing (log)
 import Models.Txt exposing (category)
 import Element exposing (fill)
 import Html.Events exposing (onSubmit)
+import InfiniteList
+import Array as Array
 
 maxRating : Int
 maxRating = 5
 
-view : Maybe Size -> List Patch -> Html Msg
-view s patches = Element.layout [] <|
-    case s of
-        Nothing -> Element.none
-        Just size ->
-            let
-                els : List (String, Element.Element Msg)
-                els = 
-                    patches
-                    |> List.indexedMap (\i patch -> 
-                        ( "patch-row-" ++ String.fromInt i
-                        , Lazy.lazy4 drawRows size (isUnique patch patches) i patch
-                        )
-                    )
-                    |> List.append [ ("title", drawTitle) ]
-            in
-                Keyed.column
-                    [ Element.width <| Element.px size.width
-                    , Element.height <| Element.px size.height
-                    , Element.padding Style.paddingMedium
-                    ]
-                    els
+rowHeight : Int
+rowHeight = (Style.paddingMedium + Style.paddingTiny) * 2
+
+config : Model -> InfiniteList.Config String Msg
+config model =
+    InfiniteList.config
+        { itemView = itemView model
+        , itemHeight = InfiniteList.withConstantHeight rowHeight
+        , containerHeight = 200
+            -- case model.size of
+            --    Nothing -> 100
+            --    Just {height} -> height
+        }
+        |> InfiniteList.withOffset 300
+        |> InfiniteList.withClass "my-class"
+
+view : Model -> Html Msg
+view model = 
+    div
+        [ style "width" "100%"
+        , style "height" "100%"
+        , style "overflow-x" "hidden"
+        , style "overflow-y" "auto"
+        , style "-webkit-overflow-scrolling" "touch"
+        , InfiniteList.onScroll InfiniteListMsg
+        ]
+        [ Element.layout 
+            [] 
+            drawTitle
+        , InfiniteList.view 
+            (config model) 
+            model.infiniteList 
+            (List.map .id model.patches)
+        ]
+    -- Element.layout [] <|
+    -- case s of
+    --     Nothing -> Element.none
+    --     Just size ->
+    --         let
+    --             els : List (String, Element.Element Msg)
+    --             els = 
+    --                 patches
+    --                 |> List.indexedMap (\i patch -> 
+    --                     ( "patch-row-" ++ String.fromInt i
+    --                     , Lazy.lazy4 drawRows size (isUnique patch patches) i patch
+    --                     )
+    --                 )
+    --                 |> List.append [ ("title", drawTitle) ]
+    --         in
+    --             Keyed.column
+    --                 [ Element.width <| Element.px size.width
+    --                 , Element.height <| Element.px size.height
+    --                 , Element.padding Style.paddingMedium
+    --                 ]
+    --                 els
 
 drawTitle : Element.Element Msg
 drawTitle =
@@ -57,6 +93,25 @@ drawTitle =
     , Element.padding Style.paddingMedium
     ]
     (Element.text Txt.title)
+
+itemView : Model -> Int -> Int -> String -> Html Msg
+itemView model idx listIdx item =
+    let 
+        _ = log "itemView (model.size, item)" (model.size, item)
+        row = case model.size of
+            Nothing -> Element.none
+            Just size ->
+                case model.patches
+                |> Array.fromList
+                |> Array.get listIdx
+                of
+                    Nothing -> Element.none
+                    Just patch ->
+                        drawRows size (isUnique patch model.patches) listIdx patch
+    in 
+        Element.layout
+            []
+            row
 
 drawRows : Size -> Bool -> Int -> Patch -> Element.Element Msg
 drawRows size unique i patch =
