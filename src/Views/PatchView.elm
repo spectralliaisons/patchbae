@@ -69,8 +69,25 @@ drawHeader size =
             , Element.padding <| Style.paddingTiny
             , Element.width <| Element.px size.width
             ]
-            [ Element.text Txt.title
+            [ drawLogo
+            , Element.text Txt.title
+            , drawMenu size
             ]
+
+drawLogo : Element.Element Msg
+drawLogo = 
+    Element.el
+        [ Element.width <| Element.px <| Style.sizeLogo + Style.paddingTiny
+        ]
+        <| Element.html <| img [A.src "./rsc/patchbae.png", A.width Style.sizeLogo, A.height Style.sizeLogo] []
+
+drawMenu : Size -> Element.Element Msg
+drawMenu size = 
+    Element.row
+        [Element.alignRight
+        ]
+        [ 
+        ]
 
 drawScrollView : Size -> Model -> Html Msg
 drawScrollView {height} model = 
