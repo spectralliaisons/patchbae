@@ -18,7 +18,7 @@ Columns:
 
 ## recent screenshot
 
-![an image examplar](./examples/proofofconcept1.jpg)
+![an image examplar](./rsc/proofofconcept1.jpg)
 
 ## e.g.
 Filter: [#     ]
