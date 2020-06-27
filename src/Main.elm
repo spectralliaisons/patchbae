@@ -1,7 +1,7 @@
 port module Main exposing (init, update)
 
 import Html exposing (..)
-import Html.Attributes exposing (style)
+import Html.Attributes as A exposing (style)
 import Browser
 import Browser.Events as Events
 import Browser.Navigation as Navigation

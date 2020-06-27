@@ -8,7 +8,7 @@ import Utils.ColorUtils exposing (fromHex, elmUIColorFromHex)
 import Views.Icons as Icons
 
 import Html exposing (..)
-import Html.Attributes exposing (style)
+import Html.Attributes as A exposing (style)
 import Element
 import Element.Keyed as Keyed
 import Element.Lazy as Lazy
@@ -32,56 +32,33 @@ rowHeight = (Style.paddingMedium + Style.paddingTiny) * 2
 
 config : Model -> InfiniteList.Config String Msg
 config model =
-    InfiniteList.config
+    let
+        screenHeight = case model.size of
+            Nothing -> 0
+            Just {height} -> height
+    in InfiniteList.config
         { itemView = itemView model
         , itemHeight = InfiniteList.withConstantHeight rowHeight
-        , containerHeight = 200
-            -- case model.size of
-            --    Nothing -> 100
-            --    Just {height} -> height
+        , containerHeight = screenHeight
         }
-        |> InfiniteList.withOffset 300
-        |> InfiniteList.withClass "my-class"
+        |> InfiniteList.withOffset screenHeight
 
 view : Model -> Html Msg
 view model = 
     div
-        [ style "width" "100%"
+        [ A.id "patch-view"
+        , style "width" "100%"
         , style "height" "100%"
         , style "overflow-x" "hidden"
         , style "overflow-y" "auto"
         , style "-webkit-overflow-scrolling" "touch"
         , InfiniteList.onScroll InfiniteListMsg
         ]
-        [ Element.layout 
-            [] 
-            drawTitle
-        , InfiniteList.view 
+        [ InfiniteList.view 
             (config model) 
             model.infiniteList 
             (List.map .id model.patches)
         ]
-    -- Element.layout [] <|
-    -- case s of
-    --     Nothing -> Element.none
-    --     Just size ->
-    --         let
-    --             els : List (String, Element.Element Msg)
-    --             els = 
-    --                 patches
-    --                 |> List.indexedMap (\i patch -> 
-    --                     ( "patch-row-" ++ String.fromInt i
-    --                     , Lazy.lazy4 drawRows size (isUnique patch patches) i patch
-    --                     )
-    --                 )
-    --                 |> List.append [ ("title", drawTitle) ]
-    --         in
-    --             Keyed.column
-    --                 [ Element.width <| Element.px size.width
-    --                 , Element.height <| Element.px size.height
-    --                 , Element.padding Style.paddingMedium
-    --                 ]
-    --                 els
 
 drawTitle : Element.Element Msg
 drawTitle =
