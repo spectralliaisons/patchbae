@@ -57,18 +57,20 @@ view model =
                 ]
 
 drawHeader : Size -> Html Msg
-drawHeader size = Element.layout [] <|
-  Element.el 
-    [ Font.color <| elmUIColorFromHex Style.colorSystemFont
-    , Background.color <| elmUIColorFromHex Style.colorInputBg
-    , Style.sizeFontMed
-    , Style.fontFamilyPatch
-    , Element.centerX
-    , Element.padding <| Style.heightHeader // 4
-    , Element.width <| Element.px size.width
-    , Element.height <| Element.px <| Style.heightHeader
-    ]
-    (Element.text Txt.title)
+drawHeader size = 
+    Element.layout 
+        [ 
+        ]
+        <| Element.row
+            [ Font.color <| elmUIColorFromHex Style.colorSystemFont
+            , Background.color <| elmUIColorFromHex Style.colorHeaderBg
+            , Style.sizeFontMed
+            , Style.fontFamilyPatch
+            , Element.padding <| Style.paddingTiny
+            , Element.width <| Element.px size.width
+            ]
+            [ Element.text Txt.title
+            ]
 
 drawScrollView : Size -> Model -> Html Msg
 drawScrollView {height} model = 

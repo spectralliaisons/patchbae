@@ -41,6 +41,9 @@ colorBorderUnfocused = colorBg
 colorInputBg : String
 colorInputBg = colorBg
 
+colorHeaderBg : String
+colorHeaderBg = "#2a2a2a"
+
 ------------------------------------
 --
 -- SIZES
@@ -78,6 +81,3 @@ paddingTiny = 5
 
 heightIconSort : Int
 heightIconSort = 18
-
-heightHeader : Int
-heightHeader = 35
