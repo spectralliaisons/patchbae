@@ -2,9 +2,13 @@
 Like tracking your synth and drum machine patches in a spreadsheet, but filter by tags, categories.
 
 Columns:
+
 _Name_: What is its saved name?
+
 _Instrument_: Which device?
+
 _Address_: Where is it stored on the device?
+
 _Family_: Variations of one root patch.
 
 _Friends_: What sounds good together?
