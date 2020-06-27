@@ -52,8 +52,8 @@ view model =
             div
                 [ 
                 ]
-                [ drawHeader size
-                , drawScrollView size model
+                [ HLazy.lazy drawHeader size
+                , HLazy.lazy2 drawScrollView size model
                 ]
 
 drawHeader : Size -> Html Msg
@@ -85,10 +85,11 @@ drawScrollView {height} model =
             , style "-webkit-overflow-scrolling" "touch"
             , InfiniteList.onScroll InfiniteListMsg
             ]
-            [ InfiniteList.view 
-                (config model) 
-                model.infiniteList 
-                (List.map .id (Array.toList model.patches))
+            [ HLazy.lazy3 
+                InfiniteList.view 
+                    (config model) 
+                    model.infiniteList 
+                    (List.map .id (Array.toList model.patches))
             ]
         ]
 
@@ -225,7 +226,7 @@ drawRating l howToSort patch =
         stars =
             List.range 1 maxRating
             |> List.map (\i ->
-                Icons.btnStar i patch.rating <| Just <| SetPatchRating patch i
+                ELazy.lazy3 Icons.btnStar i patch.rating <| Just <| SetPatchRating patch i
             )
     in
         Element.column
