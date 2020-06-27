@@ -68,9 +68,12 @@ drawHeader size =
             , Style.fontFamilyPatch
             , Element.padding <| Style.paddingTiny
             , Element.width <| Element.px size.width
+            , Font.italic
             ]
             [ drawLogo
-            , Element.text Txt.title
+            , Element.el 
+                [ Font.bold ]
+                <| Element.text Txt.title
             , drawMenu size
             ]
 
@@ -84,9 +87,11 @@ drawLogo =
 drawMenu : Size -> Element.Element Msg
 drawMenu size = 
     Element.row
-        [Element.alignRight
+        [ Element.moveRight <| toFloat Style.paddingTiny
+        , Style.sizeFontSm
+        , Style.fontFamilyPatch
         ]
-        [ 
+        [ Element.text Txt.motto
         ]
 
 drawScrollView : Size -> Model -> Html Msg

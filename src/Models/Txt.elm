@@ -20,3 +20,6 @@ name = "name"
 
 rating : String
 rating = "rating"
+
+motto : String
+motto = "Sexy storage for your synthiest patches."
