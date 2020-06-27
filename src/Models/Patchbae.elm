@@ -4,6 +4,7 @@ import Browser.Navigation as Navigation
 
 import Models.Style exposing (Size)
 
+import Array exposing (Array)
 import InfiniteList
 import Debug exposing (log)
 
@@ -11,7 +12,7 @@ type alias Model =
     { infiniteList : InfiniteList.Model
     , key : Navigation.Key
     , size : Maybe Size
-    , patches : List Patch
+    , patches : Patches
     }
 
 type alias Patch = 
@@ -27,7 +28,7 @@ type alias Patch =
     , friends : List Int
     }
 
-type alias Patches = List Patch
+type alias Patches = Array Patch
 
 initPatch : Patch
 initPatch = Patch
@@ -42,13 +43,17 @@ initPatch = Patch
     [] -- family
     [] -- friends
 
+initPatches : Patches
+initPatches = 
+    Array.fromList [initPatch]
+
 type Direction = Up | Down | NoDirection
 type Sortable = SortByInstrument Direction | SortByCategory Direction | SortByAddress Direction | SortByName Direction | SortByRating Direction
 
 -- True if this patch would not conflict with existing entries
-isUnique : Patch -> List Patch -> Bool
+isUnique : Patch -> Patches -> Bool
 isUnique patchA patches =
-    if List.length patches == 1 then True
+    if Array.length patches == 1 then True
     else
         let 
             notInitial = 
@@ -58,8 +63,8 @@ isUnique patchA patches =
                 patchA.name /= initPatch.name
         in 
             patches
-            |> List.filter (\{id} -> id /= patchA.id)
-            |> List.foldl (\patchB acc -> acc && different patchA patchB) notInitial
+            |> Array.filter (\{id} -> id /= patchA.id)
+            |> Array.foldl (\patchB acc -> acc && different patchA patchB) notInitial
 
 different : Patch -> Patch -> Bool
 different patchA patchB =
@@ -71,7 +76,7 @@ different patchA patchB =
 mostRecentIDInt : Patches -> Int
 mostRecentIDInt patches =
     patches
-    |> List.foldl (\{id} acc -> 
+    |> Array.foldl (\{id} acc -> 
         max acc <| Maybe.withDefault acc <| String.toInt id
     ) 0
 

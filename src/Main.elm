@@ -14,7 +14,7 @@ import InfiniteList
 import Debug exposing (log)
 
 import Msg.PatchMsg exposing (Msg(..))
-import Models.Patchbae exposing (Model, initPatch, Patches, sortBy, mostRecentIDInt)
+import Models.Patchbae exposing (Model, initPatch, initPatches, Patches, sortBy, mostRecentIDInt)
 import Models.Txt as Txt
 import Models.Style exposing (Size)
 import Views.PatchView as PBV
@@ -46,7 +46,7 @@ init : Flags -> Url.Url -> Navigation.Key -> (Model, Cmd Msg)
 init flags url key =
   let 
     -- we're about to get the real size
-    model = Model InfiniteList.init key Nothing [initPatch]
+    model = Model InfiniteList.init key Nothing initPatches
   in
     ( model
     -- TODO: does this cause model / url parsing to happen twice?
@@ -99,7 +99,7 @@ update msg model =
     SetPatchInstrument patch instrument ->
       let
         patches1 = model.patches
-          |> List.map (\p -> 
+          |> Array.map (\p -> 
             if p.id == patch.id then
               {p | instrument = instrument}
             else 
@@ -113,7 +113,7 @@ update msg model =
     SetPatchCategory patch category ->
       let
         patches1 = model.patches
-          |> List.map (\p -> 
+          |> Array.map (\p -> 
             if p.id == patch.id then
               {p | category = category}
             else 
@@ -127,7 +127,7 @@ update msg model =
     SetPatchAddress patch address ->
       let
         patches1 = model.patches
-          |> List.map (\p -> 
+          |> Array.map (\p -> 
             if p.id == patch.id then
               {p | address = address}
             else 
@@ -141,7 +141,7 @@ update msg model =
     SetPatchName patch name ->
       let
         patches1 = model.patches
-          |> List.map (\p -> 
+          |> Array.map (\p -> 
             if p.id == patch.id then
               {p | name = name}
             else 
@@ -159,7 +159,7 @@ update msg model =
         newPatch = {initPatch | id = newID}
         -- Add an initialized element at the beginning of the list of all patches
         patches1 = 
-          newPatch :: model.patches
+          Array.append (Array.fromList [newPatch]) model.patches
 
       in
         ( {model | patches = patches1}
@@ -168,7 +168,7 @@ update msg model =
     
     RmPatch patch ->
       let
-        patches1 = List.filter (\{id} -> id /= patch.id) model.patches
+        patches1 = Array.filter (\{id} -> id /= patch.id) model.patches
 
       in
         ( {model | patches = patches1}
@@ -178,7 +178,7 @@ update msg model =
     SetPatchRating patch rating ->
       let
         patches1 = model.patches
-          |> List.map (\p -> 
+          |> Array.map (\p -> 
             if p.id == patch.id then
               {p | rating = rating}
             else 
@@ -192,9 +192,7 @@ update msg model =
     -- Load user's patches
     ReceivePatches patches ->
       let
-        patches1 = case patches of
-            [] -> [initPatch]
-            _ -> patches
+        patches1 = if Array.length patches == 0 then initPatches else patches
       in ( {model | patches = patches1}
       , Cmd.none
       )

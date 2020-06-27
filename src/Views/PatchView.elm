@@ -9,9 +9,10 @@ import Views.Icons as Icons
 
 import Html exposing (..)
 import Html.Attributes as A exposing (style)
+import Html.Lazy as HLazy
 import Element
 import Element.Keyed as Keyed
-import Element.Lazy as Lazy
+import Element.Lazy as ELazy
 import Element.Background as Background
 import Element.Border as Border
 import Element.Input as Input
@@ -22,7 +23,7 @@ import Models.Txt exposing (category)
 import Element exposing (fill)
 import Html.Events exposing (onSubmit)
 import InfiniteList
-import Array as Array
+import Array exposing (Array)
 
 maxRating : Int
 maxRating = 5
@@ -57,7 +58,7 @@ view model =
         [ InfiniteList.view 
             (config model) 
             model.infiniteList 
-            (List.map .id model.patches)
+            (List.map .id (Array.toList model.patches))
         ]
 
 drawTitle : Element.Element Msg
@@ -73,22 +74,14 @@ drawTitle =
 
 itemView : Model -> Int -> Int -> String -> Html Msg
 itemView model idx listIdx item =
-    let 
-        _ = log "itemView (model.size, item)" (model.size, item)
-        row = case model.size of
-            Nothing -> Element.none
-            Just size ->
-                case model.patches
-                |> Array.fromList
-                |> Array.get listIdx
-                of
-                    Nothing -> Element.none
-                    Just patch ->
-                        drawRows size (isUnique patch model.patches) listIdx patch
-    in 
-        Element.layout
-            []
-            row
+    Element.layout []
+    <| case model.size of
+        Nothing -> Element.none
+        Just size ->
+            case Array.get listIdx model.patches of
+                Nothing -> Element.none
+                Just patch ->
+                    ELazy.lazy4 drawRows size (isUnique patch model.patches) listIdx patch
 
 drawRows : Size -> Bool -> Int -> Patch -> Element.Element Msg
 drawRows size unique i patch =
@@ -106,21 +99,21 @@ drawRows size unique i patch =
         -- only the top row has headers
         controls = 
             if topRow then
-                Lazy.lazy drawButtonAddPatch unique
+                ELazy.lazy drawButtonAddPatch unique
             else
-                Lazy.lazy drawButtonRmPatch patch
+                ELazy.lazy drawButtonRmPatch patch
     in
         which
             [ Element.spacing Style.paddingMedium
             , Element.padding Style.paddingTiny
             , Element.centerX
             ]
-            [ Lazy.lazy drawID patch.id
-            , Lazy.lazy5 drawTextInput topRow (getHeader i Txt.instrument) (SortByInstrument NoDirection) patch.instrument (SetPatchInstrument patch)
-            , Lazy.lazy5 drawTextInput topRow (getHeader i Txt.category) (SortByCategory NoDirection) patch.category (SetPatchCategory patch)
-            , Lazy.lazy5 drawTextInput topRow (getHeader i Txt.address) (SortByAddress NoDirection) patch.address (SetPatchAddress patch)
-            , Lazy.lazy5 drawTextInput topRow (getHeader i Txt.name) (SortByName NoDirection) patch.name (SetPatchName patch)
-            , Lazy.lazy3 drawRating (getHeader i Txt.rating) (SortByRating NoDirection) patch
+            [ ELazy.lazy drawID patch.id
+            , ELazy.lazy5 drawTextInput topRow (getHeader i Txt.instrument) (SortByInstrument NoDirection) patch.instrument (SetPatchInstrument patch)
+            , ELazy.lazy5 drawTextInput topRow (getHeader i Txt.category) (SortByCategory NoDirection) patch.category (SetPatchCategory patch)
+            , ELazy.lazy5 drawTextInput topRow (getHeader i Txt.address) (SortByAddress NoDirection) patch.address (SetPatchAddress patch)
+            , ELazy.lazy5 drawTextInput topRow (getHeader i Txt.name) (SortByName NoDirection) patch.name (SetPatchName patch)
+            , ELazy.lazy3 drawRating (getHeader i Txt.rating) (SortByRating NoDirection) patch
             , controls
             ]
 
