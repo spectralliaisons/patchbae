@@ -45,32 +45,50 @@ config model =
         |> InfiniteList.withOffset screenHeight
 
 view : Model -> Html Msg
-view model = 
-    div
-        [ A.id "patch-view"
-        , style "width" "100%"
-        , style "height" "100%"
-        , style "overflow-x" "hidden"
-        , style "overflow-y" "auto"
-        , style "-webkit-overflow-scrolling" "touch"
-        , InfiniteList.onScroll InfiniteListMsg
-        ]
-        [ InfiniteList.view 
-            (config model) 
-            model.infiniteList 
-            (List.map .id (Array.toList model.patches))
-        ]
+view model =
+    case model.size of
+        Nothing -> div [] []
+        Just size -> 
+            div
+                [ 
+                ]
+                [ drawHeader size
+                , drawScrollView size model
+                ]
 
-drawTitle : Element.Element Msg
-drawTitle =
+drawHeader : Size -> Html Msg
+drawHeader size = Element.layout [] <|
   Element.el 
     [ Font.color <| elmUIColorFromHex Style.colorSystemFont
+    , Background.color <| elmUIColorFromHex Style.colorInputBg
     , Style.sizeFontMed
     , Style.fontFamilyPatch
     , Element.centerX
-    , Element.padding Style.paddingMedium
+    , Element.padding <| Style.heightHeader // 4
+    , Element.width <| Element.px size.width
+    , Element.height <| Element.px <| Style.heightHeader
     ]
     (Element.text Txt.title)
+
+drawScrollView : Size -> Model -> Html Msg
+drawScrollView {height} model = 
+    div 
+        [ style "background-color" Style.colorBg 
+        ] 
+        [ div
+            [ style "width" "100%"
+            , style "height" (String.fromInt height ++ "px")
+            , style "overflow-x" "hidden"
+            , style "overflow-y" "auto"
+            , style "-webkit-overflow-scrolling" "touch"
+            , InfiniteList.onScroll InfiniteListMsg
+            ]
+            [ InfiniteList.view 
+                (config model) 
+                model.infiniteList 
+                (List.map .id (Array.toList model.patches))
+            ]
+        ]
 
 itemView : Model -> Int -> Int -> String -> Html Msg
 itemView model idx listIdx item =
@@ -88,14 +106,14 @@ drawRows size unique i patch =
     let
         which = if Style.smallScreen size then Element.column else Element.row
         topRow = i == 0
-        drawID id =
-            Element.el 
-                [ Font.color <| elmUIColorFromHex Style.colorMutedFont
-                , Style.sizeFontSm
-                , Style.fontFamilyPatch
-                , Element.moveDown <| toFloat Style.paddingMedium
-                ]
-                (Element.text id)
+        -- drawID id =
+        --     Element.el 
+        --         [ Font.color <| elmUIColorFromHex Style.colorMutedFont
+        --         , Style.sizeFontSm
+        --         , Style.fontFamilyPatch
+        --         , Element.moveDown <| toFloat Style.paddingMedium
+        --         ]
+        --         (Element.text id)
         -- only the top row has headers
         controls = 
             if topRow then
@@ -108,8 +126,8 @@ drawRows size unique i patch =
             , Element.padding Style.paddingTiny
             , Element.centerX
             ]
-            [ ELazy.lazy drawID patch.id
-            , ELazy.lazy5 drawTextInput topRow (getHeader i Txt.instrument) (SortByInstrument NoDirection) patch.instrument (SetPatchInstrument patch)
+            -- [ ELazy.lazy drawID patch.id
+            [ ELazy.lazy5 drawTextInput topRow (getHeader i Txt.instrument) (SortByInstrument NoDirection) patch.instrument (SetPatchInstrument patch)
             , ELazy.lazy5 drawTextInput topRow (getHeader i Txt.category) (SortByCategory NoDirection) patch.category (SetPatchCategory patch)
             , ELazy.lazy5 drawTextInput topRow (getHeader i Txt.address) (SortByAddress NoDirection) patch.address (SetPatchAddress patch)
             , ELazy.lazy5 drawTextInput topRow (getHeader i Txt.name) (SortByName NoDirection) patch.name (SetPatchName patch)

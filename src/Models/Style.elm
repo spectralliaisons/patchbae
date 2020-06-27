@@ -78,3 +78,6 @@ paddingTiny = 5
 
 heightIconSort : Int
 heightIconSort = 18
+
+heightHeader : Int
+heightHeader = 35

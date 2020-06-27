@@ -219,11 +219,6 @@ subscriptions model = Sub.batch <|
 view model =
   { title = Txt.title
   , body = 
-    [ div 
-      [ style "background-color" "#1d1d1d" 
-      , style "height" "100%"
-      ] 
-      [ PBV.view model
-      ]
+    [ PBV.view model
     ]
   }
