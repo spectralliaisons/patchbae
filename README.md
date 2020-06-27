@@ -29,6 +29,16 @@ Instrument | Category | Address | Name | Rating | Tags | Projects | Family | Fri
 | Roland TR-8S | #kick | Kit-97 | Buum | * * | #deep #broad | #SongA #SongB | #Cine4 | #Snak |
 | Roland TR-8S | #snare | Kit-97 | Snak | * * * * | #deep #broad | #SongC #SongD | # | #Buum |
 
-## Building
+## compiling
 
+### development
+
+#### [elm-live](https://www.elm-live.com/)
+
+1. `elm-live src/Main.elm --open --start-page=index.html -- --output=elm.js`
+
+2. [http://localhost:8000](http://localhost:8000)
+
+### production
+ 
 `sh optimize.sh src/Main.elm`
