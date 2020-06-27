@@ -107,6 +107,7 @@ itemView model idx listIdx item =
 drawRows : Size -> Bool -> Int -> Patch -> Element.Element Msg
 drawRows size unique i patch =
     let
+        -- _ = log "drawRows size" size
         which = if Style.smallScreen size then Element.column else Element.row
         topRow = i == 0
         -- drawID id =

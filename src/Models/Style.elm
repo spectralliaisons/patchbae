@@ -9,7 +9,7 @@ type alias Size =
     }
 
 smallScreen : Size -> Bool
-smallScreen {width} = width < 500
+smallScreen {width} = width < 950
 
 fontFamilyPatch : Element.Attribute message
 fontFamilyPatch = 

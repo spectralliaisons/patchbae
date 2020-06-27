@@ -14501,7 +14501,7 @@ var $author$project$Models$Style$paddingMedium = 25;
 var $author$project$Models$Txt$rating = 'rating';
 var $author$project$Models$Style$smallScreen = function (_v0) {
 	var width = _v0.width;
-	return width < 500;
+	return width < 950;
 };
 var $author$project$Views$PatchView$drawRows = F4(
 	function (size, unique, i, patch) {
