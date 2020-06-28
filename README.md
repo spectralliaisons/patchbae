@@ -16,6 +16,10 @@ Columns:
 
 `Friends`: What sounds good together?
 
+See a demo by entering `storage().demo()` in the console and refreshing the page. 
+
+Clear the data by entering `storage().clear()` and refreshing.
+
 ## recent screenshot
 
 ![an image examplar](./rsc/proofofconcept1.jpg)
