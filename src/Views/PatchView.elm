@@ -33,28 +33,21 @@ rowHeight = (Style.paddingMedium + Style.paddingTiny) * 2
 
 config : Model -> InfiniteList.Config String Msg
 config model =
-    let
-        screenHeight = case model.size of
-            Nothing -> 0
-            Just {height} -> height
-    in InfiniteList.config
+    InfiniteList.config
         { itemView = itemView model
         , itemHeight = InfiniteList.withConstantHeight rowHeight
-        , containerHeight = screenHeight
+        , containerHeight = model.size.height
         }
-        |> InfiniteList.withOffset screenHeight
+        |> InfiniteList.withOffset model.size.height
 
 view : Model -> Html Msg
 view model =
-    case model.size of
-        Nothing -> div [] []
-        Just size -> 
-            div
-                [ 
-                ]
-                [ HLazy.lazy drawHeader size
-                , HLazy.lazy2 drawScrollView size model
-                ]
+    div
+        [ 
+        ]
+        [ HLazy.lazy drawHeader model.size
+        , HLazy.lazy2 drawScrollView model.size model
+        ]
 
 drawHeader : Size -> Html Msg
 drawHeader size = 
@@ -118,13 +111,10 @@ drawScrollView {height} model =
 itemView : Model -> Int -> Int -> String -> Html Msg
 itemView model idx listIdx item =
     Element.layout []
-    <| case model.size of
+    <| case Array.get listIdx model.patches of
         Nothing -> Element.none
-        Just size ->
-            case Array.get listIdx model.patches of
-                Nothing -> Element.none
-                Just patch ->
-                    ELazy.lazy4 drawRows size (isUnique patch model.patches) listIdx patch
+        Just patch ->
+            ELazy.lazy4 drawRows model.size (isUnique patch model.patches) listIdx patch
 
 drawRows : Size -> Bool -> Int -> Patch -> Element.Element Msg
 drawRows size unique i patch =

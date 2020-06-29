@@ -14,22 +14,19 @@ import InfiniteList
 import Debug exposing (log)
 
 import Msg.PatchMsg exposing (Msg(..))
-import Models.Patchbae exposing (Model, initPatch, initPatches, Patches, sortBy, mostRecentIDInt)
+import Models.Patchbae exposing (UserData, UID, Model, initPatch, initPatches, Patches, sortBy, mostRecentIDInt)
 import Models.Txt as Txt
 import Models.Style exposing (Size)
 import Views.PatchView as PBV
 
-type alias Flags =
-  {}
-
--- Elm requests historic performance data
-port cached : Patches -> Cmd msg
-
--- save.js provides historic performance data
-port receive : (Patches -> msg) -> Sub msg
+type alias Flags = 
+  { uid : UID
+  , patches : Models.Patchbae.Patches
+  , size : Size
+  }
 
 -- Elm wants to save the model
-port save : Patches -> Cmd msg
+port save : UserData -> Cmd msg
 
 main : Program Flags Model Msg
 main =
@@ -43,28 +40,13 @@ main =
       }
 
 init : Flags -> Url.Url -> Navigation.Key -> (Model, Cmd Msg)
-init flags url key =
-  let 
-    -- we're about to get the real size
-    model = Model InfiniteList.init key Nothing initPatches
-  in
-    ( model
-    -- TODO: does this cause model / url parsing to happen twice?
-    , getViewportSize
+init {uid, patches, size} url key =
+  let
+      patches1 = if Array.length patches == 0 then initPatches else patches
+  in 
+    ( Model InfiniteList.init key size uid patches1
+    , Cmd.none
     )
-
--- set model/url THEN size when we get it
--- see https://package.elm-lang.org/packages/elm/core/latest/Task#Task
--- see https://discourse.elm-lang.org/t/chaining-initialisation-commands/2336
--- see https://blog.revathskumar.com/2018/11/elm-send-command-on-init.html
-getViewportSize : Cmd Msg
-getViewportSize =
-  Dom.getViewport
-  |> Task.map 
-    (\{viewport} -> 
-      Initialize <| Size (round viewport.width) (round viewport.height)
-    )
-  |> Task.perform identity
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -82,17 +64,9 @@ update msg model =
         ( model
         , Cmd.none
         )
-    
-    -- TODO: Portfolio Evaluator View should handle these
-
-    Initialize size ->
-      ( {model | size = Just size}
-      -- Load user data on init 
-      , cached <| model.patches
-      )
 
     SetSize size ->
-      ( {model | size = Just size}
+      ( {model | size = size}
       , Cmd.none
       )
 
@@ -106,9 +80,7 @@ update msg model =
               p
           )
       in 
-        ( {model | patches = patches1}
-        , save patches1
-        )
+        setCache {model | patches = patches1}
       
     SetPatchCategory patch category ->
       let
@@ -120,9 +92,7 @@ update msg model =
               p
           )
       in 
-        ( {model | patches = patches1}
-        , save patches1
-        )
+        setCache {model | patches = patches1}
     
     SetPatchAddress patch address ->
       let
@@ -134,9 +104,7 @@ update msg model =
               p
           )
       in 
-        ( {model | patches = patches1}
-        , save patches1
-        )
+        setCache {model | patches = patches1}
     
     SetPatchName patch name ->
       let
@@ -148,9 +116,7 @@ update msg model =
               p
           )
       in 
-        ( {model | patches = patches1}
-        , save patches1
-        )
+        setCache {model | patches = patches1}
     
     AddPatch ->
       let
@@ -162,18 +128,14 @@ update msg model =
           Array.append (Array.fromList [newPatch]) model.patches
 
       in
-        ( {model | patches = patches1}
-        , save patches1
-        )
+        setCache {model | patches = patches1}
     
     RmPatch patch ->
       let
         patches1 = Array.filter (\{id} -> id /= patch.id) model.patches
 
       in
-        ( {model | patches = patches1}
-        , save patches1
-        )
+        setCache {model | patches = patches1}
     
     SetPatchRating patch rating ->
       let
@@ -185,34 +147,26 @@ update msg model =
               p
           )
       in 
-        ( {model | patches = patches1}
-        , save patches1
-        )
-    
-    -- Load user's patches
-    ReceivePatches patches ->
-      let
-        patches1 = if Array.length patches == 0 then initPatches else patches
-      in ( {model | patches = patches1}
-      , Cmd.none
-      )
+        setCache {model | patches = patches1}
     
     SortBy how ->
-      let
-        patches1 = sortBy model.patches how
-      in ( {model | patches = patches1}
-      , save patches1 -- why not remember the sort?
-      )
+      let patches1 = sortBy model.patches how
+      in setCache {model | patches = patches1}
     
     InfiniteListMsg infiniteList ->
       ( { model | infiniteList = infiniteList }
       , Cmd.none 
       )
 
+setCache : Model -> (Model, Cmd msg)
+setCache model =
+  ( model 
+  , save <| UserData model.uid model.patches
+  )
+
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.batch <|
   [ Events.onResize (\w h -> SetSize <| Size w h)
-  , receive ReceivePatches
   ]
 
 -- view : Model -> Browser.Document Msg

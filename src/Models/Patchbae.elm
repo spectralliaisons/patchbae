@@ -11,7 +11,8 @@ import Debug exposing (log)
 type alias Model =
     { infiniteList : InfiniteList.Model
     , key : Navigation.Key
-    , size : Maybe Size
+    , size : Size
+    , uid : UID
     , patches : Patches
     }
 
@@ -29,6 +30,13 @@ type alias Patch =
     }
 
 type alias Patches = Array Patch
+
+type alias UID = Maybe String
+
+type alias UserData = 
+    { uid : UID
+    , patches : Patches
+    }
 
 initPatch : Patch
 initPatch = Patch

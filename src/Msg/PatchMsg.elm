@@ -10,7 +10,6 @@ import Browser
 type Msg
     = UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
-    | Initialize Size
     | SetSize Size
     | SetPatchInstrument Patch String
     | SetPatchCategory Patch String
@@ -19,6 +18,5 @@ type Msg
     | SetPatchRating Patch Int
     | AddPatch
     | RmPatch Patch
-    | ReceivePatches Patches
     | SortBy Sortable
     | InfiniteListMsg InfiniteList.Model
