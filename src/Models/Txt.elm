@@ -44,3 +44,6 @@ loginTitle = "I am your PatchBae."
 
 loginSubtitle : String
 loginSubtitle = "Please enter your credentials or continue as a guest."
+
+loginFailed : String
+loginFailed = "That didn't work."

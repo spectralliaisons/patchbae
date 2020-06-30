@@ -44,6 +44,9 @@ colorInputBg = colorBg
 colorHeaderBg : String
 colorHeaderBg = "#2a2a2a"
 
+colorErrorMessage : String
+colorErrorMessage = "#ff0066"
+
 ------------------------------------
 --
 -- SIZES
@@ -96,3 +99,9 @@ widthHeaderLogInOut = 150
 
 sizeLogoLg : Int
 sizeLogoLg = 125
+
+heightIconWait : Int
+heightIconWait = 50
+
+offsetLogInFailedMessage : Int
+offsetLogInFailedMessage = 75

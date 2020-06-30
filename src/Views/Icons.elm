@@ -56,3 +56,8 @@ iconSort : Element.Element msg
 iconSort =
     Element.html
     <| Filled.sort Style.heightIconSort colorButton
+
+iconWait : Element.Element msg
+iconWait =
+    Element.html
+    <| Filled.sync Style.heightIconWait colorButton

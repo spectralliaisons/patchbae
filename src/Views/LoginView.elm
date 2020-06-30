@@ -1,9 +1,11 @@
 module Views.LoginView exposing (..)
 
+import Models.Patchbae exposing (Model, UserState(..))
 import Models.Txt as Txt
 import Models.Style as Style exposing (Size)
 import Utils.ColorUtils exposing (fromHex, elmUIColorFromHex)
 import Views.Shared exposing (text_)
+import Views.Icons as Icons
 
 import Msg.PatchMsg exposing (Msg(..))
 import Html exposing (..)
@@ -17,40 +19,67 @@ import Element.Border as Border
 import Element.Input as Input
 import Element.Font as Font
 
-view : Size -> String -> String -> Html Msg
-view size username password = Element.layout [] <|
-    Element.column
-        [ Font.color <| elmUIColorFromHex Style.colorSystemFont
-        , Background.color <| elmUIColorFromHex Style.colorInputBg
-        , Style.sizeFontMed
-        , Style.fontFamilyPatch
-        , Element.padding <| Style.paddingMedium
-        , Element.width <| Element.px size.width
-        , Element.height <| Element.px size.height
-        , Element.spacing Style.paddingMedium
-        ]
-        [ drawLogo
-        , Element.el
-            [ Element.centerX
-            , Element.padding Style.paddingMedium
-            , Font.bold
+view : Model -> Html Msg
+view model = Element.layout [] <|
+    let
+        input username password =
+            [ Element.column
+                [ Element.padding Style.paddingMedium
+                , Element.spacing Style.paddingMedium
+                , Element.centerX
+                ]
+                [ ELazy.lazy4 drawTextInput model.size Txt.login username SetLogin
+                , ELazy.lazy4 drawTextInput model.size Txt.password password SetPassword
+                , drawLogIn
+                ]
+            , Element.el
+                [ Element.moveDown <| toFloat Style.paddingMedium
+                , Element.centerX
+                ]
+                drawSkip
             ]
-            <| text_ Txt.loginTitle
-        , Element.column
-            [ Element.padding Style.paddingMedium
+        content = 
+            case model.user of
+                LoggedOut username password ->
+                    input username password
+                FailedLogIn -> 
+                    List.append 
+                    (input "" "")
+                    <| [ Element.el 
+                            [ Font.color <| elmUIColorFromHex Style.colorErrorMessage
+                            , Style.sizeFontMed
+                            , Style.fontFamilyPatch
+                            , Element.centerX
+                            , Element.moveUp <| toFloat Style.offsetLogInFailedMessage
+                            ]
+                            <| Element.text Txt.loginFailed
+                        ]
+                LoggingIn ->
+                    [ Element.el
+                        [ Element.centerX
+                        ]
+                        Icons.iconWait
+                    ]
+                _ -> []
+    in
+        Element.column
+            [ Font.color <| elmUIColorFromHex Style.colorSystemFont
+            , Background.color <| elmUIColorFromHex Style.colorInputBg
+            , Style.sizeFontMed
+            , Style.fontFamilyPatch
+            , Element.padding <| Style.paddingMedium
+            , Element.width <| Element.px model.size.width
+            , Element.height <| Element.px model.size.height
             , Element.spacing Style.paddingMedium
-            , Element.centerX
             ]
-            [ ELazy.lazy4 drawTextInput size Txt.login username SetLogin
-            , ELazy.lazy4 drawTextInput size Txt.password password SetPassword
-            , drawLogIn
-            ]
-        , Element.el
-            [ Element.moveDown <| toFloat Style.paddingMedium
-            , Element.centerX
-            ]
-            drawSkip
-        ]
+            ([ drawLogo
+            , Element.el
+                [ Element.centerX
+                , Element.padding Style.paddingMedium
+                , Font.bold
+                ]
+                <| text_ Txt.loginTitle
+            ] ++ content)
 
 drawLogo : Element.Element Msg
 drawLogo =

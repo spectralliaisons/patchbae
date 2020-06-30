@@ -38,7 +38,7 @@ type alias UserData =
     , patches : Patches
     }
 
-type UserState = LoggedIn String | LoggedOut String String | Guest
+type UserState = LoggedIn String | LoggedOut String String | LoggingIn | FailedLogIn | Guest
 
 initPatch : Patch
 initPatch = Patch

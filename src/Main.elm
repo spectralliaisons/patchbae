@@ -99,7 +99,7 @@ update msg model =
     
     LogIn ->
       -- TODO:
-      ( model
+      ( {model | user = FailedLogIn} -- LoggingIn
       , Cmd.none
       )
     
@@ -222,7 +222,9 @@ view : Model -> Browser.Document Msg
 view model =
   let 
     cv = case model.user of
-      LoggedOut username password -> LoginView.view model.size username password
+      LoggedOut _ _ -> LoginView.view model
+      LoggingIn -> LoginView.view model
+      FailedLogIn -> LoginView.view model
       _ -> PatchesView.view model
   in 
     { title = Txt.title

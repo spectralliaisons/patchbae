@@ -5733,6 +5733,7 @@ var $author$project$Main$subscriptions = function (model) {
 					}))
 			]));
 };
+var $author$project$Models$Patchbae$FailedLogIn = {$: 'FailedLogIn'};
 var $elm$core$Elm$JsArray$appendN = _JsArray_appendN;
 var $elm$core$Elm$JsArray$slice = _JsArray_slice;
 var $elm$core$Array$appendHelpBuilder = F2(
@@ -6245,7 +6246,11 @@ var $author$project$Main$update = F2(
 						{user: user1}),
 					$elm$core$Platform$Cmd$none);
 			case 'LogIn':
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{user: $author$project$Models$Patchbae$FailedLogIn}),
+					$elm$core$Platform$Cmd$none);
 			case 'SkipLogin':
 				return $author$project$Main$setCache(
 					_Utils_update(
@@ -6385,6 +6390,14 @@ var $author$project$Msg$PatchMsg$SetLogin = function (a) {
 var $author$project$Msg$PatchMsg$SetPassword = function (a) {
 	return {$: 'SetPassword', a: a};
 };
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
 var $mdgriffith$elm_ui$Internal$Model$Class = F2(
 	function (a, b) {
 		return {$: 'Class', a: a, b: b};
@@ -6448,6 +6461,7 @@ var $mdgriffith$elm_ui$Element$Font$color = function (fontColor) {
 			'color',
 			fontColor));
 };
+var $author$project$Models$Style$colorErrorMessage = '#ff0066';
 var $author$project$Models$Style$colorBg = '#1d1d1d';
 var $author$project$Models$Style$colorInputBg = $author$project$Models$Style$colorBg;
 var $author$project$Models$Style$colorSystemFont = '#a3a091';
@@ -7003,14 +7017,6 @@ var $mdgriffith$elm_ui$Internal$Style$CenterY = {$: 'CenterY'};
 var $mdgriffith$elm_ui$Internal$Style$Top = {$: 'Top'};
 var $mdgriffith$elm_ui$Internal$Style$alignments = _List_fromArray(
 	[$mdgriffith$elm_ui$Internal$Style$Top, $mdgriffith$elm_ui$Internal$Style$Bottom, $mdgriffith$elm_ui$Internal$Style$Right, $mdgriffith$elm_ui$Internal$Style$Left, $mdgriffith$elm_ui$Internal$Style$CenterX, $mdgriffith$elm_ui$Internal$Style$CenterY]);
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
 var $elm$core$List$concat = function (lists) {
 	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
 };
@@ -13768,6 +13774,107 @@ var $author$project$Views$LoginView$drawTextInput = F4(
 				text: txt
 			});
 	});
+var $icidasset$elm_material_icons$Material$Icons$Types$Color = function (a) {
+	return {$: 'Color', a: a};
+};
+var $author$project$Views$Icons$colorButton = $icidasset$elm_material_icons$Material$Icons$Types$Color(
+	$author$project$Utils$ColorUtils$fromHex($author$project$Models$Style$colorSystemFont));
+var $author$project$Models$Style$heightIconWait = 50;
+var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
+var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
+var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
+var $avh4$elm_color$Color$toCssString = function (_v0) {
+	var r = _v0.a;
+	var g = _v0.b;
+	var b = _v0.c;
+	var a = _v0.d;
+	var roundTo = function (x) {
+		return $elm$core$Basics$round(x * 1000) / 1000;
+	};
+	var pct = function (x) {
+		return $elm$core$Basics$round(x * 10000) / 100;
+	};
+	return $elm$core$String$concat(
+		_List_fromArray(
+			[
+				'rgba(',
+				$elm$core$String$fromFloat(
+				pct(r)),
+				'%,',
+				$elm$core$String$fromFloat(
+				pct(g)),
+				'%,',
+				$elm$core$String$fromFloat(
+				pct(b)),
+				'%,',
+				$elm$core$String$fromFloat(
+				roundTo(a)),
+				')'
+			]));
+};
+var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var $icidasset$elm_material_icons$Material$Icons$Internal$icon = F4(
+	function (attributes, nodes, size, coloring) {
+		var sizeAsString = $elm$core$String$fromInt(size);
+		return A2(
+			$elm$svg$Svg$svg,
+			_Utils_ap(
+				attributes,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$height(sizeAsString),
+						$elm$svg$Svg$Attributes$width(sizeAsString)
+					])),
+			_List_fromArray(
+				[
+					A2(
+					$elm$svg$Svg$g,
+					_List_fromArray(
+						[
+							function () {
+							if (coloring.$ === 'Color') {
+								var color = coloring.a;
+								return $elm$svg$Svg$Attributes$fill(
+									$avh4$elm_color$Color$toCssString(color));
+							} else {
+								return $elm$svg$Svg$Attributes$fill('currentColor');
+							}
+						}()
+						]),
+					nodes)
+				]));
+	});
+var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
+var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var $icidasset$elm_material_icons$Material$Icons$sync = A2(
+	$icidasset$elm_material_icons$Material$Icons$Internal$icon,
+	_List_fromArray(
+		[
+			$elm$svg$Svg$Attributes$viewBox('0 0 24 24')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$d('M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z')
+				]),
+			_List_Nil),
+			A2(
+			$elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$d('M0 0h24v24H0z'),
+					$elm$svg$Svg$Attributes$fill('none')
+				]),
+			_List_Nil)
+		]));
+var $author$project$Views$Icons$iconWait = $mdgriffith$elm_ui$Element$html(
+	A2($icidasset$elm_material_icons$Material$Icons$sync, $author$project$Models$Style$heightIconWait, $author$project$Views$Icons$colorButton));
 var $mdgriffith$elm_ui$Internal$Model$OnlyDynamic = F2(
 	function (a, b) {
 		return {$: 'OnlyDynamic', a: a, b: b};
@@ -14009,6 +14116,7 @@ var $mdgriffith$elm_ui$Element$Lazy$lazy4 = F5(
 			A6($elm$virtual_dom$VirtualDom$lazy6, $mdgriffith$elm_ui$Element$Lazy$apply4, fn, a, b, c, d));
 	});
 var $author$project$Models$Txt$login = 'login';
+var $author$project$Models$Txt$loginFailed = 'That didn\'t work.';
 var $author$project$Models$Txt$loginTitle = 'I am your PatchBae.';
 var $mdgriffith$elm_ui$Element$moveDown = function (y) {
 	return A2(
@@ -14016,6 +14124,7 @@ var $mdgriffith$elm_ui$Element$moveDown = function (y) {
 		$mdgriffith$elm_ui$Internal$Flag$moveY,
 		$mdgriffith$elm_ui$Internal$Model$MoveY(y));
 };
+var $author$project$Models$Style$offsetLogInFailedMessage = 75;
 var $mdgriffith$elm_ui$Element$padding = function (x) {
 	var f = x;
 	return A2(
@@ -14031,12 +14140,79 @@ var $mdgriffith$elm_ui$Element$padding = function (x) {
 };
 var $author$project$Models$Style$paddingMedium = 25;
 var $author$project$Models$Txt$password = 'password';
-var $author$project$Views$LoginView$view = F3(
-	function (size, username, password) {
-		return A2(
-			$mdgriffith$elm_ui$Element$layout,
-			_List_Nil,
-			A2(
+var $author$project$Views$LoginView$view = function (model) {
+	return A2(
+		$mdgriffith$elm_ui$Element$layout,
+		_List_Nil,
+		function () {
+			var input = F2(
+				function (username, password) {
+					return _List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$column,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$padding($author$project$Models$Style$paddingMedium),
+									$mdgriffith$elm_ui$Element$spacing($author$project$Models$Style$paddingMedium),
+									$mdgriffith$elm_ui$Element$centerX
+								]),
+							_List_fromArray(
+								[
+									A5($mdgriffith$elm_ui$Element$Lazy$lazy4, $author$project$Views$LoginView$drawTextInput, model.size, $author$project$Models$Txt$login, username, $author$project$Msg$PatchMsg$SetLogin),
+									A5($mdgriffith$elm_ui$Element$Lazy$lazy4, $author$project$Views$LoginView$drawTextInput, model.size, $author$project$Models$Txt$password, password, $author$project$Msg$PatchMsg$SetPassword),
+									$author$project$Views$LoginView$drawLogIn
+								])),
+							A2(
+							$mdgriffith$elm_ui$Element$el,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$moveDown($author$project$Models$Style$paddingMedium),
+									$mdgriffith$elm_ui$Element$centerX
+								]),
+							$author$project$Views$LoginView$drawSkip)
+						]);
+				});
+			var content = function () {
+				var _v0 = model.user;
+				switch (_v0.$) {
+					case 'LoggedOut':
+						var username = _v0.a;
+						var password = _v0.b;
+						return A2(input, username, password);
+					case 'FailedLogIn':
+						return A2(
+							$elm$core$List$append,
+							A2(input, '', ''),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$el,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$Font$color(
+											$author$project$Utils$ColorUtils$elmUIColorFromHex($author$project$Models$Style$colorErrorMessage)),
+											$author$project$Models$Style$sizeFontMed,
+											$author$project$Models$Style$fontFamilyPatch,
+											$mdgriffith$elm_ui$Element$centerX,
+											$mdgriffith$elm_ui$Element$moveUp($author$project$Models$Style$offsetLogInFailedMessage)
+										]),
+									$mdgriffith$elm_ui$Element$text($author$project$Models$Txt$loginFailed))
+								]));
+					case 'LoggingIn':
+						return _List_fromArray(
+							[
+								A2(
+								$mdgriffith$elm_ui$Element$el,
+								_List_fromArray(
+									[$mdgriffith$elm_ui$Element$centerX]),
+								$author$project$Views$Icons$iconWait)
+							]);
+					default:
+						return _List_Nil;
+				}
+			}();
+			return A2(
 				$mdgriffith$elm_ui$Element$column,
 				_List_fromArray(
 					[
@@ -14048,47 +14224,28 @@ var $author$project$Views$LoginView$view = F3(
 						$author$project$Models$Style$fontFamilyPatch,
 						$mdgriffith$elm_ui$Element$padding($author$project$Models$Style$paddingMedium),
 						$mdgriffith$elm_ui$Element$width(
-						$mdgriffith$elm_ui$Element$px(size.width)),
+						$mdgriffith$elm_ui$Element$px(model.size.width)),
 						$mdgriffith$elm_ui$Element$height(
-						$mdgriffith$elm_ui$Element$px(size.height)),
+						$mdgriffith$elm_ui$Element$px(model.size.height)),
 						$mdgriffith$elm_ui$Element$spacing($author$project$Models$Style$paddingMedium)
 					]),
-				_List_fromArray(
-					[
-						$author$project$Views$LoginView$drawLogo,
-						A2(
-						$mdgriffith$elm_ui$Element$el,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$centerX,
-								$mdgriffith$elm_ui$Element$padding($author$project$Models$Style$paddingMedium),
-								$mdgriffith$elm_ui$Element$Font$bold
-							]),
-						$author$project$Views$Shared$text_($author$project$Models$Txt$loginTitle)),
-						A2(
-						$mdgriffith$elm_ui$Element$column,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$padding($author$project$Models$Style$paddingMedium),
-								$mdgriffith$elm_ui$Element$spacing($author$project$Models$Style$paddingMedium),
-								$mdgriffith$elm_ui$Element$centerX
-							]),
-						_List_fromArray(
-							[
-								A5($mdgriffith$elm_ui$Element$Lazy$lazy4, $author$project$Views$LoginView$drawTextInput, size, $author$project$Models$Txt$login, username, $author$project$Msg$PatchMsg$SetLogin),
-								A5($mdgriffith$elm_ui$Element$Lazy$lazy4, $author$project$Views$LoginView$drawTextInput, size, $author$project$Models$Txt$password, password, $author$project$Msg$PatchMsg$SetPassword),
-								$author$project$Views$LoginView$drawLogIn
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$el,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$moveDown($author$project$Models$Style$paddingMedium),
-								$mdgriffith$elm_ui$Element$centerX
-							]),
-						$author$project$Views$LoginView$drawSkip)
-					])));
-	});
+				_Utils_ap(
+					_List_fromArray(
+						[
+							$author$project$Views$LoginView$drawLogo,
+							A2(
+							$mdgriffith$elm_ui$Element$el,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$centerX,
+									$mdgriffith$elm_ui$Element$padding($author$project$Models$Style$paddingMedium),
+									$mdgriffith$elm_ui$Element$Font$bold
+								]),
+							$author$project$Views$Shared$text_($author$project$Models$Txt$loginTitle))
+						]),
+					content));
+		}());
+};
 var $author$project$Msg$PatchMsg$InfiniteListMsg = function (a) {
 	return {$: 'InfiniteListMsg', a: a};
 };
@@ -14148,78 +14305,6 @@ var $author$project$Models$Patchbae$SortByRating = function (a) {
 var $author$project$Models$Txt$address = 'address';
 var $author$project$Models$Txt$category = 'category';
 var $author$project$Msg$PatchMsg$AddPatch = {$: 'AddPatch'};
-var $icidasset$elm_material_icons$Material$Icons$Types$Color = function (a) {
-	return {$: 'Color', a: a};
-};
-var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
-var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
-var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
-var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
-var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
-var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
-var $avh4$elm_color$Color$toCssString = function (_v0) {
-	var r = _v0.a;
-	var g = _v0.b;
-	var b = _v0.c;
-	var a = _v0.d;
-	var roundTo = function (x) {
-		return $elm$core$Basics$round(x * 1000) / 1000;
-	};
-	var pct = function (x) {
-		return $elm$core$Basics$round(x * 10000) / 100;
-	};
-	return $elm$core$String$concat(
-		_List_fromArray(
-			[
-				'rgba(',
-				$elm$core$String$fromFloat(
-				pct(r)),
-				'%,',
-				$elm$core$String$fromFloat(
-				pct(g)),
-				'%,',
-				$elm$core$String$fromFloat(
-				pct(b)),
-				'%,',
-				$elm$core$String$fromFloat(
-				roundTo(a)),
-				')'
-			]));
-};
-var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
-var $icidasset$elm_material_icons$Material$Icons$Internal$icon = F4(
-	function (attributes, nodes, size, coloring) {
-		var sizeAsString = $elm$core$String$fromInt(size);
-		return A2(
-			$elm$svg$Svg$svg,
-			_Utils_ap(
-				attributes,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$height(sizeAsString),
-						$elm$svg$Svg$Attributes$width(sizeAsString)
-					])),
-			_List_fromArray(
-				[
-					A2(
-					$elm$svg$Svg$g,
-					_List_fromArray(
-						[
-							function () {
-							if (coloring.$ === 'Color') {
-								var color = coloring.a;
-								return $elm$svg$Svg$Attributes$fill(
-									$avh4$elm_color$Color$toCssString(color));
-							} else {
-								return $elm$svg$Svg$Attributes$fill('currentColor');
-							}
-						}()
-						]),
-					nodes)
-				]));
-	});
-var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
-var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
 var $icidasset$elm_material_icons$Material$Icons$add_circle = A2(
 	$icidasset$elm_material_icons$Material$Icons$Internal$icon,
 	_List_fromArray(
@@ -14263,8 +14348,6 @@ var $author$project$Views$Icons$button = F2(
 				onPress: evt
 			});
 	});
-var $author$project$Views$Icons$colorButton = $icidasset$elm_material_icons$Material$Icons$Types$Color(
-	$author$project$Utils$ColorUtils$fromHex($author$project$Models$Style$colorSystemFont));
 var $author$project$Models$Style$heightButton = 40;
 var $author$project$Views$Icons$btnAdd = F2(
 	function (enabled, cmd) {
@@ -15340,12 +15423,15 @@ var $author$project$Views$PatchesView$view = function (model) {
 var $author$project$Main$view = function (model) {
 	var cv = function () {
 		var _v0 = model.user;
-		if (_v0.$ === 'LoggedOut') {
-			var username = _v0.a;
-			var password = _v0.b;
-			return A3($author$project$Views$LoginView$view, model.size, username, password);
-		} else {
-			return $author$project$Views$PatchesView$view(model);
+		switch (_v0.$) {
+			case 'LoggedOut':
+				return $author$project$Views$LoginView$view(model);
+			case 'LoggingIn':
+				return $author$project$Views$LoginView$view(model);
+			case 'FailedLogIn':
+				return $author$project$Views$LoginView$view(model);
+			default:
+				return $author$project$Views$PatchesView$view(model);
 		}
 	}();
 	return {
