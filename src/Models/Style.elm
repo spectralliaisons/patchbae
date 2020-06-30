@@ -82,5 +82,17 @@ paddingTiny = 5
 heightIconSort : Int
 heightIconSort = 18
 
-sizeLogo : Int
-sizeLogo = 40
+sizeLogoSm : Int
+sizeLogoSm = 40
+
+widthLogin : Int
+widthLogin = 250
+
+heightHeader : Int
+heightHeader = 50
+
+widthHeaderLogInOut : Int
+widthHeaderLogInOut = 150
+
+sizeLogoLg : Int
+sizeLogoLg = 125

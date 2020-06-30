@@ -1,4 +1,4 @@
-module Views.PatchView exposing (..)
+module Views.PatchesView exposing (..)
 
 import Models.Patchbae exposing (Model, Patch, isUnique, Sortable(..), Direction(..))
 import Models.Txt as Txt
@@ -6,6 +6,8 @@ import Models.Style as Style exposing (Size)
 import Msg.PatchMsg exposing (Msg(..))
 import Utils.ColorUtils exposing (fromHex, elmUIColorFromHex)
 import Views.Icons as Icons
+import Views.Shared exposing (text_)
+import Views.Header as Header
 
 import Html exposing (..)
 import Html.Attributes as A exposing (style)
@@ -43,48 +45,9 @@ config model =
 view : Model -> Html Msg
 view model =
     div
-        [ 
-        ]
-        [ HLazy.lazy drawHeader model.size
+        []
+        [ Header.view model
         , HLazy.lazy2 drawScrollView model.size model
-        ]
-
-drawHeader : Size -> Html Msg
-drawHeader size = 
-    Element.layout 
-        [ 
-        ]
-        <| Element.row
-            [ Font.color <| elmUIColorFromHex Style.colorSystemFont
-            , Background.color <| elmUIColorFromHex Style.colorHeaderBg
-            , Style.sizeFontMed
-            , Style.fontFamilyPatch
-            , Element.padding <| Style.paddingTiny
-            , Element.width <| Element.px size.width
-            , Font.italic
-            ]
-            [ drawLogo
-            , Element.el 
-                [ Font.bold ]
-                <| Element.text Txt.title
-            , drawMenu size
-            ]
-
-drawLogo : Element.Element Msg
-drawLogo = 
-    Element.el
-        [ Element.width <| Element.px <| Style.sizeLogo + Style.paddingTiny
-        ]
-        <| Element.html <| img [A.src "./rsc/patchbae.png", A.width Style.sizeLogo, A.height Style.sizeLogo] []
-
-drawMenu : Size -> Element.Element Msg
-drawMenu size = 
-    Element.row
-        [ Element.moveRight <| toFloat Style.paddingTiny
-        , Style.sizeFontSm
-        , Style.fontFamilyPatch
-        ]
-        [ Element.text Txt.motto
         ]
 
 drawScrollView : Size -> Model -> Html Msg
@@ -109,9 +72,8 @@ drawScrollView {height} model =
         ]
 
 itemView : Model -> Int -> Int -> String -> Html Msg
-itemView model idx listIdx item =
-    Element.layout []
-    <| case Array.get listIdx model.patches of
+itemView model idx listIdx item = Element.layout [] <|
+    case Array.get listIdx model.patches of
         Nothing -> Element.none
         Just patch ->
             ELazy.lazy4 drawRows model.size (isUnique patch model.patches) listIdx patch
@@ -195,15 +157,6 @@ drawTextInput topRow l howToSort txt cmd =
             , placeholder = Nothing
             , label = labl
             }
-
-text_ : String -> Element.Element Msg
-text_ str = 
-  Element.el 
-    [ Font.color <| elmUIColorFromHex Style.colorSystemFont
-    , Style.sizeFontMed
-    , Style.fontFamilyPatch
-    ]
-    (Element.text str)
 
 button_ : String -> Maybe Msg -> Element.Element Msg
 button_ str msg =

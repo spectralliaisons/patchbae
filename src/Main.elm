@@ -14,10 +14,11 @@ import InfiniteList
 import Debug exposing (log)
 
 import Msg.PatchMsg exposing (Msg(..))
-import Models.Patchbae exposing (UserData, UID, Model, initPatch, initPatches, Patches, sortBy, mostRecentIDInt)
+import Models.Patchbae exposing (UserData, UID, Model, initPatch, initPatches, Patches, sortBy, mostRecentIDInt, UserState(..))
 import Models.Txt as Txt
 import Models.Style exposing (Size)
-import Views.PatchView as PBV
+import Views.LoginView as LoginView
+import Views.PatchesView as PatchesView
 
 type alias Flags = 
   { uid : UID
@@ -42,9 +43,13 @@ main =
 init : Flags -> Url.Url -> Navigation.Key -> (Model, Cmd Msg)
 init {uid, patches, size} url key =
   let
-      patches1 = if Array.length patches == 0 then initPatches else patches
+    usr = case uid of
+      Nothing -> LoggedOut "" ""
+      Just "anonymous" -> Guest
+      Just who -> LoggedIn who
+    patches1 = if Array.length patches == 0 then initPatches else patches
   in 
-    ( Model InfiniteList.init key size uid patches1
+    ( Model InfiniteList.init key size usr patches1
     , Cmd.none
     )
 
@@ -69,6 +74,44 @@ update msg model =
       ( {model | size = size}
       , Cmd.none
       )
+    
+    -- LOGIN
+
+    SetLogin str ->
+      let
+        user1 = case model.user of
+          LoggedOut _ password -> LoggedOut str password
+          other -> other
+      in 
+        ( {model | user = user1}
+        , Cmd.none
+        )
+    
+    SetPassword str ->
+      let
+        user1 = case model.user of
+          LoggedOut username _ -> LoggedOut username str
+          other -> other
+      in 
+        ( {model | user = user1}
+        , Cmd.none
+        )
+    
+    LogIn ->
+      -- TODO:
+      ( model
+      , Cmd.none
+      )
+    
+    SkipLogin ->
+      setCache {model | user = Guest}
+    
+    -- HEADER
+
+    LogOut ->
+      setCache {model | user = LoggedOut "" ""}
+
+    -- PATCHES
 
     SetPatchInstrument patch instrument ->
       let
@@ -160,19 +203,30 @@ update msg model =
 
 setCache : Model -> (Model, Cmd msg)
 setCache model =
-  ( model 
-  , save <| UserData model.uid model.patches
-  )
+  let
+    uid = case model.user of
+      LoggedIn who -> Just who
+      Guest -> Just "anonymous"
+      _ -> Nothing
+  in
+    ( model 
+    , save <| UserData uid model.patches
+    )
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.batch <|
   [ Events.onResize (\w h -> SetSize <| Size w h)
   ]
 
--- view : Model -> Browser.Document Msg
+view : Model -> Browser.Document Msg
 view model =
-  { title = Txt.title
-  , body = 
-    [ PBV.view model
-    ]
-  }
+  let 
+    cv = case model.user of
+      LoggedOut username password -> LoginView.view model.size username password
+      _ -> PatchesView.view model
+  in 
+    { title = Txt.title
+    , body =
+      [ cv
+      ]
+    }

@@ -11,6 +11,15 @@ type Msg
     = UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
     | SetSize Size
+    -- LOGIN
+    | SetLogin String
+    | SetPassword String
+    | LogIn
+    | SkipLogin
+    -- HEADER
+    | LogOut
+    -- PATCHES
+    | InfiniteListMsg InfiniteList.Model
     | SetPatchInstrument Patch String
     | SetPatchCategory Patch String
     | SetPatchAddress Patch String
@@ -19,4 +28,3 @@ type Msg
     | AddPatch
     | RmPatch Patch
     | SortBy Sortable
-    | InfiniteListMsg InfiniteList.Model

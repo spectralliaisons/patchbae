@@ -12,7 +12,7 @@ type alias Model =
     { infiniteList : InfiniteList.Model
     , key : Navigation.Key
     , size : Size
-    , uid : UID
+    , user : UserState
     , patches : Patches
     }
 
@@ -37,6 +37,8 @@ type alias UserData =
     { uid : UID
     , patches : Patches
     }
+
+type UserState = LoggedIn String | LoggedOut String String | Guest
 
 initPatch : Patch
 initPatch = Patch
@@ -87,7 +89,6 @@ mostRecentIDInt patches =
     |> Array.foldl (\{id} acc -> 
         max acc <| Maybe.withDefault acc <| String.toInt id
     ) 0
-
 
 sortBy : Patches -> Sortable -> Patches
 sortBy patches how =
