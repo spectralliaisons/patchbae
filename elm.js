@@ -5299,6 +5299,9 @@ var $elm$json$Json$Decode$list = _Json_decodeList;
 var $elm$json$Json$Decode$null = _Json_decodeNull;
 var $elm$json$Json$Decode$oneOf = _Json_oneOf;
 var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$Msg$PatchMsg$HandleAuthentication = function (a) {
+	return {$: 'HandleAuthentication', a: a};
+};
 var $author$project$Msg$PatchMsg$SetSize = function (a) {
 	return {$: 'SetSize', a: a};
 };
@@ -5307,6 +5310,7 @@ var $author$project$Models$Style$Size = F2(
 		return {height: height, width: width};
 	});
 var $elm$core$Platform$Sub$batch = _Platform_batch;
+var $author$project$Main$handle_authentication = _Platform_incomingPort('handle_authentication', $elm$json$Json$Decode$string);
 var $elm$browser$Browser$Events$Window = {$: 'Window'};
 var $elm$browser$Browser$Events$MySub = F3(
 	function (a, b, c) {
@@ -5730,10 +5734,12 @@ var $author$project$Main$subscriptions = function (model) {
 					function (w, h) {
 						return $author$project$Msg$PatchMsg$SetSize(
 							A2($author$project$Models$Style$Size, w, h));
-					}))
+					})),
+				$author$project$Main$handle_authentication($author$project$Msg$PatchMsg$HandleAuthentication)
 			]));
 };
 var $author$project$Models$Patchbae$FailedLogIn = {$: 'FailedLogIn'};
+var $author$project$Models$Patchbae$LoggingIn = {$: 'LoggingIn'};
 var $elm$core$Elm$JsArray$appendN = _JsArray_appendN;
 var $elm$core$Elm$JsArray$slice = _JsArray_slice;
 var $elm$core$Array$appendHelpBuilder = F2(
@@ -5915,6 +5921,30 @@ var $elm$core$Array$append = F2(
 						bTree)));
 		}
 	});
+var $elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				$elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Main$authenticate = _Platform_outgoingPort(
+	'authenticate',
+	function ($) {
+		var a = $.a;
+		var b = $.b;
+		return A2(
+			$elm$json$Json$Encode$list,
+			$elm$core$Basics$identity,
+			_List_fromArray(
+				[
+					$elm$json$Json$Encode$string(a),
+					$elm$json$Json$Encode$string(b)
+				]));
+	});
 var $elm$core$Array$filter = F2(
 	function (isGood, array) {
 		return $elm$core$Array$fromList(
@@ -5928,6 +5958,7 @@ var $elm$core$Array$filter = F2(
 				array));
 	});
 var $elm$browser$Browser$Navigation$load = _Browser_load;
+var $elm$core$Debug$log = _Debug_log;
 var $elm$core$Elm$JsArray$map = _JsArray_map;
 var $elm$core$Array$map = F2(
 	function (func, _v0) {
@@ -6024,15 +6055,6 @@ var $elm$core$Maybe$destruct = F3(
 		}
 	});
 var $elm$json$Json$Encode$int = _Json_wrap;
-var $elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				$elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(_Utils_Tuple0),
-				entries));
-	});
 var $elm$json$Json$Encode$null = _Json_encodeNull;
 var $elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
@@ -6047,7 +6069,6 @@ var $elm$json$Json$Encode$object = function (pairs) {
 			_Json_emptyObject(_Utils_Tuple0),
 			pairs));
 };
-var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Main$save = _Platform_outgoingPort(
 	'save',
 	function ($) {
@@ -6246,16 +6267,36 @@ var $author$project$Main$update = F2(
 						{user: user1}),
 					$elm$core$Platform$Cmd$none);
 			case 'LogIn':
+				var cmd = function () {
+					var _v4 = model.user;
+					if (_v4.$ === 'LoggedOut') {
+						var username = _v4.a;
+						var password = _v4.b;
+						return $author$project$Main$authenticate(
+							_Utils_Tuple2(username, password));
+					} else {
+						return $elm$core$Platform$Cmd$none;
+					}
+				}();
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{user: $author$project$Models$Patchbae$FailedLogIn}),
-					$elm$core$Platform$Cmd$none);
+						{user: $author$project$Models$Patchbae$LoggingIn}),
+					cmd);
 			case 'SkipLogin':
 				return $author$project$Main$setCache(
 					_Utils_update(
 						model,
 						{user: $author$project$Models$Patchbae$Guest}));
+			case 'HandleAuthentication':
+				var status = msg.a;
+				var status1 = $author$project$Models$Patchbae$FailedLogIn;
+				var _v5 = A2($elm$core$Debug$log, 'HandleAuthentication status', status);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{user: status1}),
+					$elm$core$Platform$Cmd$none);
 			case 'LogOut':
 				return $author$project$Main$setCache(
 					_Utils_update(
@@ -6343,8 +6384,8 @@ var $author$project$Main$update = F2(
 				var patch = msg.a;
 				var patches1 = A2(
 					$elm$core$Array$filter,
-					function (_v4) {
-						var id = _v4.id;
+					function (_v6) {
+						var id = _v6.id;
 						return !_Utils_eq(id, patch.id);
 					},
 					model.patches);

@@ -86,10 +86,20 @@
 
             return {uid:"U0",patches:out};
         }
+
+        var authenticate = function ([login, password]) {
+
+            console.log("authenticate() login: " + login + " password: " + password);
+
+            var status = "ok";
+
+            app.ports.handle_authentication.send(status);
+        }
         
         // Corresponds to Main.cached
         return {
             load : load,
+            authenticate : authenticate,
             save : function (dat) {
                 
                 localStorage.setItem(key, JSON.stringify(dat));
@@ -107,5 +117,6 @@
         })
     });
 
+    app.ports.authenticate.subscribe(storage().authenticate)
     app.ports.save.subscribe(storage().save);
 })(this);

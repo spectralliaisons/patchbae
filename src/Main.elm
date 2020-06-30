@@ -26,6 +26,10 @@ type alias Flags =
   , size : Size
   }
 
+port authenticate : (String, String) -> Cmd msg
+
+port handle_authentication : (String -> msg) -> Sub msg
+
 -- Elm wants to save the model
 port save : UserData -> Cmd msg
 
@@ -98,13 +102,26 @@ update msg model =
         )
     
     LogIn ->
-      -- TODO:
-      ( {model | user = FailedLogIn} -- LoggingIn
-      , Cmd.none
-      )
+      let
+        cmd = case model.user of
+          LoggedOut username password -> authenticate (username, password)
+          _ -> Cmd.none
+      in
+        ( {model | user = LoggingIn}
+        , cmd
+        )
     
     SkipLogin ->
       setCache {model | user = Guest}
+    
+    HandleAuthentication status ->
+      let
+        _ = log "HandleAuthentication status" status
+        status1 = FailedLogIn
+      in
+        ( {model | user = status1}
+        , Cmd.none
+        )
     
     -- HEADER
 
@@ -216,6 +233,7 @@ setCache model =
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.batch <|
   [ Events.onResize (\w h -> SetSize <| Size w h)
+  , handle_authentication HandleAuthentication
   ]
 
 view : Model -> Browser.Document Msg

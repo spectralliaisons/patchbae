@@ -16,6 +16,7 @@ type Msg
     | SetPassword String
     | LogIn
     | SkipLogin
+    | HandleAuthentication String
     -- HEADER
     | LogOut
     -- PATCHES
