@@ -20,9 +20,13 @@ See a demo by entering `storage().demo()` in the console and refreshing the page
 
 Clear the data by entering `storage().clear()` and refreshing.
 
-## recent screenshot
+## recent screenshots
 
-![an image examplar](./rsc/proofofconcept1.jpg)
+### Enter credentials to modify an existing table of patches or continue as guest to rely only on localStorage
+![an image examplar](./rsc/screen0.jpg)
+
+### Table of patches
+![an image examplar](./rsc/screen1.jpg)
 
 ## e.g.
 Filter: [#     ]
