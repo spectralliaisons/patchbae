@@ -6430,6 +6430,7 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
+							patches: $author$project$Models$Patchbae$initPatches,
 							user: A2($author$project$Models$Patchbae$LoggedOut, '', '')
 						}));
 			case 'SetPatchInstrument':

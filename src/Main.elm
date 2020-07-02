@@ -142,7 +142,7 @@ update msg model =
     -- HEADER
 
     LogOut ->
-      setCache {model | user = LoggedOut "" ""}
+      setCache {model | user = LoggedOut "" "", patches = initPatches}
 
     -- PATCHES
 
