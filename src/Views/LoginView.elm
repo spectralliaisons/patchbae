@@ -42,9 +42,9 @@ view model = Element.layout [] <|
             case model.user of
                 LoggedOut username password ->
                     input username password
-                FailedLogIn -> 
+                FailedLogIn username password -> 
                     List.append 
-                    (input "" "")
+                    (input username password)
                     <| [ Element.el 
                             [ Font.color <| elmUIColorFromHex Style.colorErrorMessage
                             , Style.sizeFontMed

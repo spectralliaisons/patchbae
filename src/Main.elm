@@ -12,9 +12,10 @@ import Array as Array
 import Array.Extra as A
 import InfiniteList
 import Debug exposing (log)
+import Json.Decode as D 
 
 import Msg.PatchMsg exposing (Msg(..))
-import Models.Patchbae exposing (UserData, UID, Model, initPatch, initPatches, Patches, sortBy, mostRecentIDInt, UserState(..))
+import Models.Patchbae exposing (UserData, UID, Model, userDataDecoder, initPatch, initPatches, Patches, sortBy, mostRecentIDInt, UserState(..))
 import Models.Txt as Txt
 import Models.Style exposing (Size)
 import Views.LoginView as LoginView
@@ -105,6 +106,7 @@ update msg model =
       let
         cmd = case model.user of
           LoggedOut username password -> authenticate (username, password)
+          FailedLogIn username password -> authenticate (username, password)
           _ -> Cmd.none
       in
         ( {model | user = LoggingIn}
@@ -114,12 +116,22 @@ update msg model =
     SkipLogin ->
       setCache {model | user = Guest}
     
-    HandleAuthentication status ->
+    HandleAuthentication serialized ->
       let
-        _ = log "HandleAuthentication status" status
-        status1 = FailedLogIn
+        failure = {model | user = FailedLogIn "" ""}
+        model1 = 
+          case D.decodeString userDataDecoder serialized of
+            Ok res -> 
+              let _ = log "Ok res" res
+              in case res.uid of
+                Just who -> {model | user = LoggedIn who, patches = res.patches}
+                _ -> failure
+            err -> 
+              let _ = log "Error parsing user patches:" err
+              in failure
+        _ = log "model1" model1
       in
-        ( {model | user = status1}
+        ( model1
         , Cmd.none
         )
     
@@ -242,7 +254,7 @@ view model =
     cv = case model.user of
       LoggedOut _ _ -> LoginView.view model
       LoggingIn -> LoginView.view model
-      FailedLogIn -> LoginView.view model
+      FailedLogIn _ _ -> LoginView.view model
       _ -> PatchesView.view model
   in 
     { title = Txt.title

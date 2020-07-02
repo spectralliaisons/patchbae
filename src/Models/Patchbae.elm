@@ -4,6 +4,8 @@ import Browser.Navigation as Navigation
 
 import Models.Style exposing (Size)
 
+import Json.Decode as D exposing (string, list, array, maybe, int)
+import Json.Decode.Pipeline exposing (required)
 import Array exposing (Array)
 import InfiniteList
 import Debug exposing (log)
@@ -33,12 +35,35 @@ type alias Patches = Array Patch
 
 type alias UID = Maybe String
 
+type UserState = LoggedIn String | LoggedOut String String | LoggingIn | FailedLogIn String String | Guest
+
 type alias UserData = 
     { uid : UID
     , patches : Patches
     }
 
-type UserState = LoggedIn String | LoggedOut String String | LoggingIn | FailedLogIn | Guest
+userDataDecoder : D.Decoder UserData
+userDataDecoder = 
+    D.succeed UserData
+    |> required "uid" uidDecoder
+    |> required "patches" (array patchDecoder)
+
+uidDecoder : D.Decoder UID
+uidDecoder = maybe string
+
+patchDecoder : D.Decoder Patch
+patchDecoder = 
+    D.succeed Patch
+    |> required "id" string
+    |> required "instrument" string
+    |> required "category" string
+    |> required "address" string
+    |> required "name" string
+    |> required "rating" int
+    |> required "tags" (list string)
+    |> required "projects" (list string)
+    |> required "family" (list int)
+    |> required "friends" (list int)
 
 initPatch : Patch
 initPatch = Patch

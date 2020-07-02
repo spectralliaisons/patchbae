@@ -6,6 +6,7 @@ import Models.Style exposing (Size)
 import InfiniteList
 import Url
 import Browser
+import Models.Patchbae exposing (UserData)
 
 type Msg
     = UrlRequested Browser.UrlRequest

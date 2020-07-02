@@ -5738,7 +5738,10 @@ var $author$project$Main$subscriptions = function (model) {
 				$author$project$Main$handle_authentication($author$project$Msg$PatchMsg$HandleAuthentication)
 			]));
 };
-var $author$project$Models$Patchbae$FailedLogIn = {$: 'FailedLogIn'};
+var $author$project$Models$Patchbae$FailedLogIn = F2(
+	function (a, b) {
+		return {$: 'FailedLogIn', a: a, b: b};
+	});
 var $author$project$Models$Patchbae$LoggingIn = {$: 'LoggingIn'};
 var $elm$core$Elm$JsArray$appendN = _JsArray_appendN;
 var $elm$core$Elm$JsArray$slice = _JsArray_slice;
@@ -5945,6 +5948,7 @@ var $author$project$Main$authenticate = _Platform_outgoingPort(
 					$elm$json$Json$Encode$string(b)
 				]));
 	});
+var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$core$Array$filter = F2(
 	function (isGood, array) {
 		return $elm$core$Array$fromList(
@@ -6203,6 +6207,73 @@ var $elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
+	function (key, valDecoder, decoder) {
+		return A2(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
+			A2($elm$json$Json$Decode$field, key, valDecoder),
+			decoder);
+	});
+var $author$project$Models$Patchbae$patchDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'friends',
+	$elm$json$Json$Decode$list($elm$json$Json$Decode$int),
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'family',
+		$elm$json$Json$Decode$list($elm$json$Json$Decode$int),
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'projects',
+			$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
+			A3(
+				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+				'tags',
+				$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
+				A3(
+					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+					'rating',
+					$elm$json$Json$Decode$int,
+					A3(
+						$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+						'name',
+						$elm$json$Json$Decode$string,
+						A3(
+							$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+							'address',
+							$elm$json$Json$Decode$string,
+							A3(
+								$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+								'category',
+								$elm$json$Json$Decode$string,
+								A3(
+									$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+									'instrument',
+									$elm$json$Json$Decode$string,
+									A3(
+										$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+										'id',
+										$elm$json$Json$Decode$string,
+										$elm$json$Json$Decode$succeed($author$project$Models$Patchbae$Patch)))))))))));
+var $elm$json$Json$Decode$maybe = function (decoder) {
+	return $elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder),
+				$elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing)
+			]));
+};
+var $author$project$Models$Patchbae$uidDecoder = $elm$json$Json$Decode$maybe($elm$json$Json$Decode$string);
+var $author$project$Models$Patchbae$userDataDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'patches',
+	$elm$json$Json$Decode$array($author$project$Models$Patchbae$patchDecoder),
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'uid',
+		$author$project$Models$Patchbae$uidDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Models$Patchbae$UserData)));
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -6269,13 +6340,19 @@ var $author$project$Main$update = F2(
 			case 'LogIn':
 				var cmd = function () {
 					var _v4 = model.user;
-					if (_v4.$ === 'LoggedOut') {
-						var username = _v4.a;
-						var password = _v4.b;
-						return $author$project$Main$authenticate(
-							_Utils_Tuple2(username, password));
-					} else {
-						return $elm$core$Platform$Cmd$none;
+					switch (_v4.$) {
+						case 'LoggedOut':
+							var username = _v4.a;
+							var password = _v4.b;
+							return $author$project$Main$authenticate(
+								_Utils_Tuple2(username, password));
+						case 'FailedLogIn':
+							var username = _v4.a;
+							var password = _v4.b;
+							return $author$project$Main$authenticate(
+								_Utils_Tuple2(username, password));
+						default:
+							return $elm$core$Platform$Cmd$none;
 					}
 				}();
 				return _Utils_Tuple2(
@@ -6289,14 +6366,37 @@ var $author$project$Main$update = F2(
 						model,
 						{user: $author$project$Models$Patchbae$Guest}));
 			case 'HandleAuthentication':
-				var status = msg.a;
-				var status1 = $author$project$Models$Patchbae$FailedLogIn;
-				var _v5 = A2($elm$core$Debug$log, 'HandleAuthentication status', status);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{user: status1}),
-					$elm$core$Platform$Cmd$none);
+				var serialized = msg.a;
+				var failure = _Utils_update(
+					model,
+					{
+						user: A2($author$project$Models$Patchbae$FailedLogIn, '', '')
+					});
+				var model1 = function () {
+					var _v6 = A2($elm$json$Json$Decode$decodeString, $author$project$Models$Patchbae$userDataDecoder, serialized);
+					if (_v6.$ === 'Ok') {
+						var res = _v6.a;
+						var _v7 = A2($elm$core$Debug$log, 'Ok res', res);
+						var _v8 = res.uid;
+						if (_v8.$ === 'Just') {
+							var who = _v8.a;
+							return _Utils_update(
+								model,
+								{
+									patches: res.patches,
+									user: $author$project$Models$Patchbae$LoggedIn(who)
+								});
+						} else {
+							return failure;
+						}
+					} else {
+						var err = _v6;
+						var _v9 = A2($elm$core$Debug$log, 'Error parsing user patches:', err);
+						return failure;
+					}
+				}();
+				var _v5 = A2($elm$core$Debug$log, 'model1', model1);
+				return _Utils_Tuple2(model1, $elm$core$Platform$Cmd$none);
 			case 'LogOut':
 				return $author$project$Main$setCache(
 					_Utils_update(
@@ -6384,8 +6484,8 @@ var $author$project$Main$update = F2(
 				var patch = msg.a;
 				var patches1 = A2(
 					$elm$core$Array$filter,
-					function (_v6) {
-						var id = _v6.id;
+					function (_v10) {
+						var id = _v10.id;
 						return !_Utils_eq(id, patch.id);
 					},
 					model.patches);
@@ -14222,9 +14322,11 @@ var $author$project$Views$LoginView$view = function (model) {
 						var password = _v0.b;
 						return A2(input, username, password);
 					case 'FailedLogIn':
+						var username = _v0.a;
+						var password = _v0.b;
 						return A2(
 							$elm$core$List$append,
-							A2(input, '', ''),
+							A2(input, username, password),
 							_List_fromArray(
 								[
 									A2(
