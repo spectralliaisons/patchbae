@@ -86,6 +86,7 @@ update msg model =
       let
         user1 = case model.user of
           LoggedOut _ password -> LoggedOut str password
+          FailedLogIn _ password -> FailedLogIn str password
           other -> other
       in 
         ( {model | user = user1}
@@ -96,6 +97,7 @@ update msg model =
       let
         user1 = case model.user of
           LoggedOut username _ -> LoggedOut username str
+          FailedLogIn username _ -> FailedLogIn username str
           other -> other
       in 
         ( {model | user = user1}
@@ -118,18 +120,20 @@ update msg model =
     
     HandleAuthentication serialized ->
       let
-        failure = {model | user = FailedLogIn "" ""}
+        failure = 
+          case model.user of
+            LoggedOut username password -> {model | user = FailedLogIn username password}
+            FailedLogIn username password -> {model | user = FailedLogIn username password}
+            _ -> {model | user = FailedLogIn "" ""}
         model1 = 
           case D.decodeString userDataDecoder serialized of
             Ok res -> 
-              let _ = log "Ok res" res
-              in case res.uid of
+              case res.uid of
                 Just who -> {model | user = LoggedIn who, patches = res.patches}
                 _ -> failure
             err -> 
               let _ = log "Error parsing user patches:" err
               in failure
-        _ = log "model1" model1
       in
         ( model1
         , Cmd.none

@@ -6307,12 +6307,16 @@ var $author$project$Main$update = F2(
 				var str = msg.a;
 				var user1 = function () {
 					var _v2 = model.user;
-					if (_v2.$ === 'LoggedOut') {
-						var password = _v2.b;
-						return A2($author$project$Models$Patchbae$LoggedOut, str, password);
-					} else {
-						var other = _v2;
-						return other;
+					switch (_v2.$) {
+						case 'LoggedOut':
+							var password = _v2.b;
+							return A2($author$project$Models$Patchbae$LoggedOut, str, password);
+						case 'FailedLogIn':
+							var password = _v2.b;
+							return A2($author$project$Models$Patchbae$FailedLogIn, str, password);
+						default:
+							var other = _v2;
+							return other;
 					}
 				}();
 				return _Utils_Tuple2(
@@ -6324,12 +6328,16 @@ var $author$project$Main$update = F2(
 				var str = msg.a;
 				var user1 = function () {
 					var _v3 = model.user;
-					if (_v3.$ === 'LoggedOut') {
-						var username = _v3.a;
-						return A2($author$project$Models$Patchbae$LoggedOut, username, str);
-					} else {
-						var other = _v3;
-						return other;
+					switch (_v3.$) {
+						case 'LoggedOut':
+							var username = _v3.a;
+							return A2($author$project$Models$Patchbae$LoggedOut, username, str);
+						case 'FailedLogIn':
+							var username = _v3.a;
+							return A2($author$project$Models$Patchbae$FailedLogIn, username, str);
+						default:
+							var other = _v3;
+							return other;
 					}
 				}();
 				return _Utils_Tuple2(
@@ -6367,19 +6375,40 @@ var $author$project$Main$update = F2(
 						{user: $author$project$Models$Patchbae$Guest}));
 			case 'HandleAuthentication':
 				var serialized = msg.a;
-				var failure = _Utils_update(
-					model,
-					{
-						user: A2($author$project$Models$Patchbae$FailedLogIn, '', '')
-					});
+				var failure = function () {
+					var _v8 = model.user;
+					switch (_v8.$) {
+						case 'LoggedOut':
+							var username = _v8.a;
+							var password = _v8.b;
+							return _Utils_update(
+								model,
+								{
+									user: A2($author$project$Models$Patchbae$FailedLogIn, username, password)
+								});
+						case 'FailedLogIn':
+							var username = _v8.a;
+							var password = _v8.b;
+							return _Utils_update(
+								model,
+								{
+									user: A2($author$project$Models$Patchbae$FailedLogIn, username, password)
+								});
+						default:
+							return _Utils_update(
+								model,
+								{
+									user: A2($author$project$Models$Patchbae$FailedLogIn, '', '')
+								});
+					}
+				}();
 				var model1 = function () {
-					var _v6 = A2($elm$json$Json$Decode$decodeString, $author$project$Models$Patchbae$userDataDecoder, serialized);
-					if (_v6.$ === 'Ok') {
-						var res = _v6.a;
-						var _v7 = A2($elm$core$Debug$log, 'Ok res', res);
-						var _v8 = res.uid;
-						if (_v8.$ === 'Just') {
-							var who = _v8.a;
+					var _v5 = A2($elm$json$Json$Decode$decodeString, $author$project$Models$Patchbae$userDataDecoder, serialized);
+					if (_v5.$ === 'Ok') {
+						var res = _v5.a;
+						var _v6 = res.uid;
+						if (_v6.$ === 'Just') {
+							var who = _v6.a;
 							return _Utils_update(
 								model,
 								{
@@ -6390,12 +6419,11 @@ var $author$project$Main$update = F2(
 							return failure;
 						}
 					} else {
-						var err = _v6;
-						var _v9 = A2($elm$core$Debug$log, 'Error parsing user patches:', err);
+						var err = _v5;
+						var _v7 = A2($elm$core$Debug$log, 'Error parsing user patches:', err);
 						return failure;
 					}
 				}();
-				var _v5 = A2($elm$core$Debug$log, 'model1', model1);
 				return _Utils_Tuple2(model1, $elm$core$Platform$Cmd$none);
 			case 'LogOut':
 				return $author$project$Main$setCache(
@@ -6484,8 +6512,8 @@ var $author$project$Main$update = F2(
 				var patch = msg.a;
 				var patches1 = A2(
 					$elm$core$Array$filter,
-					function (_v10) {
-						var id = _v10.id;
+					function (_v9) {
+						var id = _v9.id;
 						return !_Utils_eq(id, patch.id);
 					},
 					model.patches);

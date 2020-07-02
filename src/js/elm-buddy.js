@@ -41,7 +41,7 @@ Elm ports
             var docClient = new AWS.DynamoDB.DocumentClient();
 
             docClient.get(params, function(err, data) {
-                if (err) {
+                if (err || data.Item == undefined) {
                     console.log("Error authenticating:");
                     console.log(JSON.stringify(err, undefined, 2));
                     
