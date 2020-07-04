@@ -3,3 +3,4 @@ src/js/priv/*
 package-lock.json
 .DS_Store
 elm-stuff/*
+src/js/.DS_Store
