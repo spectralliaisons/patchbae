@@ -57,9 +57,15 @@ Instrument | Category | Address | Name | Rating | Tags | Projects | Family | Fri
 
 ### Setting up Amazon Cognito to authenticate user access to data
 
+This was a long trial & error process of piecing together different information, and I'm not 100% certain this works but it's very nearly the process that got it to work for me...
+
 Helpful resources: 
 - [link](https://tutorialedge.net/projects/building-blog-with-vuejs-aws/part-5-getting-started-with-cognito/)
 - [link](https://aws.amazon.com/blogs/mobile/building-fine-grained-authorization-using-amazon-cognito-user-pools-groups/)
+- [link](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CognitoIdentity.html)
+- [link](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CognitoIdentityCredentials.html)
+- [link](https://aws.amazon.com/blogs/mobile/building-fine-grained-authorization-using-amazon-cognito-user-pools-groups/)
+- [link](https://tutorialedge.net/projects/building-blog-with-vuejs-aws/part-5-getting-started-with-cognito/)
 
 1. In [AWS Services > Cognito](https://us-west-2.console.aws.amazon.com/cognito), create a User Pool and make sure "Generate client secret" is UNCHECKED. 
 
@@ -69,43 +75,14 @@ Helpful resources:
 
 4. In Authenticated Roles, select "Choose role from token" and Role resolution to "Use default Authenticated role", then click Save Changes.
 
-5. Navigate to [IAM](https://console.aws.amazon.com/iam/home#/policies) > Policies > Create Policy and enter the following JSON policy:
-```json
-"Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "dynamodb:GetItem",
-                "dynamodb:PutItem",
-                "dynamodb:Query"
-            ],
-            "Resource": [
-                "arn:aws:dynamodb: <YOUR_REGION>:<YOUR_AWS_ACCOUNT_ID>:table/<YOUR DYNAMODB_TABLE>"
-            ],
-            "Condition": {
-                "ForAllValues:StringEquals": {
-                    "dynamodb:LeadingKeys": [
-                        "${cognito-identity.amazonaws.com:sub}"
-                    ]
-                }
-            }
-        }
-    ]
-}
-```
+5. Attach the AmazonDynamoDBFullAccess policy to your Auth and Unauth Roles.
 
-You can find <YOUR_AWS_ACCOUNT_ID> by running in the Terminal:
-`aws sts get-caller-identity` and entering the value for "Account".
+6. In General settings > Users and groups > Users, select "Create user" and create a user you with to authenticate with when logging in to Patchbae.
 
-6. Attach the AmazonDynamoDBFullAccess policy to your Auth and Unauth Roles.
-
-3. In General settings > Users and groups > Users, select "Create user" and create a user you with to authenticate with when logging in to Patchbae.
-
-4. You'll need to change the password for the user you just created; to do this, you'll need to ensure aws cli is available in your Terminal:
+7. You'll need to change the password for the user you just created; to do this, you'll need to ensure aws cli is available in your Terminal:
 `brew install awscli`
 
-5. [Configure aws with your AWS admin](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-idp/admin-set-user-password.html), replacing XXX with your values:
+8. [Configure aws with your AWS admin](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-idp/admin-set-user-password.html), replacing XXX with your values:
 ```
 aws configure
 aws cognito-idp admin-set-user-password --user-pool-id XXX --username XXX --password XXX --permanent
@@ -113,17 +90,18 @@ aws cognito-idp admin-set-user-password --user-pool-id XXX --username XXX --pass
 
 ./src/js/elm-buddy.js authenticate() will now be able to retrieve an authentication token for the username and password entered in the command above!
 
-2. Install Amazon Cognito with Node JS:
+9. Install Amazon Cognito with Node JS:
 `npm install amazon-cognito-identity-js`
 
-3. Create `./src/js/priv/cognitoConfig.js` for your Amazon Cognito Credentials and fill in your Identity, User Pool, & Client Ids with the values you just created:
+10. Create `./src/js/priv/cognitoConfig.js` for your Amazon Cognito Credentials and fill in your Identity, User Pool, & Client Ids with the values you just created:
 ```js
 window.configureCognito = function () {
     return {
         region: XXX,
         IdentityPoolId: XXX,
         UserPoolId: XXX,
-        ClientId: XXX
+        ClientId: XXX,
+        TableName: XXX
     };
 };
 ```
