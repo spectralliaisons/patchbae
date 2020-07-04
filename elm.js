@@ -5738,9 +5738,9 @@ var $author$project$Main$subscriptions = function (model) {
 				$author$project$Main$handle_authentication($author$project$Msg$PatchMsg$HandleAuthentication)
 			]));
 };
-var $author$project$Models$Patchbae$FailedLogIn = F2(
-	function (a, b) {
-		return {$: 'FailedLogIn', a: a, b: b};
+var $author$project$Models$Patchbae$FailedLogIn = F3(
+	function (a, b, c) {
+		return {$: 'FailedLogIn', a: a, b: b, c: c};
 	});
 var $author$project$Models$Patchbae$LoggingIn = {$: 'LoggingIn'};
 var $elm$core$Elm$JsArray$appendN = _JsArray_appendN;
@@ -6313,7 +6313,8 @@ var $author$project$Main$update = F2(
 							return A2($author$project$Models$Patchbae$LoggedOut, str, password);
 						case 'FailedLogIn':
 							var password = _v2.b;
-							return A2($author$project$Models$Patchbae$FailedLogIn, str, password);
+							var error = _v2.c;
+							return A3($author$project$Models$Patchbae$FailedLogIn, str, password, error);
 						default:
 							var other = _v2;
 							return other;
@@ -6334,7 +6335,8 @@ var $author$project$Main$update = F2(
 							return A2($author$project$Models$Patchbae$LoggedOut, username, str);
 						case 'FailedLogIn':
 							var username = _v3.a;
-							return A2($author$project$Models$Patchbae$FailedLogIn, username, str);
+							var error = _v3.c;
+							return A3($author$project$Models$Patchbae$FailedLogIn, username, str, error);
 						default:
 							var other = _v3;
 							return other;
@@ -6384,21 +6386,22 @@ var $author$project$Main$update = F2(
 							return _Utils_update(
 								model,
 								{
-									user: A2($author$project$Models$Patchbae$FailedLogIn, username, password)
+									user: A3($author$project$Models$Patchbae$FailedLogIn, username, password, serialized)
 								});
 						case 'FailedLogIn':
 							var username = _v8.a;
 							var password = _v8.b;
+							var error = _v8.c;
 							return _Utils_update(
 								model,
 								{
-									user: A2($author$project$Models$Patchbae$FailedLogIn, username, password)
+									user: A3($author$project$Models$Patchbae$FailedLogIn, username, password, error)
 								});
 						default:
 							return _Utils_update(
 								model,
 								{
-									user: A2($author$project$Models$Patchbae$FailedLogIn, '', '')
+									user: A3($author$project$Models$Patchbae$FailedLogIn, '', '', serialized)
 								});
 					}
 				}();
@@ -14286,7 +14289,6 @@ var $mdgriffith$elm_ui$Element$Lazy$lazy4 = F5(
 			A6($elm$virtual_dom$VirtualDom$lazy6, $mdgriffith$elm_ui$Element$Lazy$apply4, fn, a, b, c, d));
 	});
 var $author$project$Models$Txt$login = 'login';
-var $author$project$Models$Txt$loginFailed = 'That didn\'t work.';
 var $author$project$Models$Txt$loginTitle = 'I am your PatchBae.';
 var $mdgriffith$elm_ui$Element$moveDown = function (y) {
 	return A2(
@@ -14353,6 +14355,7 @@ var $author$project$Views$LoginView$view = function (model) {
 					case 'FailedLogIn':
 						var username = _v0.a;
 						var password = _v0.b;
+						var error = _v0.c;
 						return A2(
 							$elm$core$List$append,
 							A2(input, username, password),
@@ -14369,7 +14372,7 @@ var $author$project$Views$LoginView$view = function (model) {
 											$mdgriffith$elm_ui$Element$centerX,
 											$mdgriffith$elm_ui$Element$moveUp($author$project$Models$Style$offsetLogInFailedMessage)
 										]),
-									$mdgriffith$elm_ui$Element$text($author$project$Models$Txt$loginFailed))
+									$mdgriffith$elm_ui$Element$text(error))
 								]));
 					case 'LoggingIn':
 						return _List_fromArray(

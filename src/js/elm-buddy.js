@@ -59,8 +59,8 @@ Elm ports
                 
                 console.log("Error authenticating:");
                 console.log(JSON.stringify(err, undefined, 2));
-                            
-                app.ports.handle_authentication.send("");
+                
+                app.ports.handle_authentication.send(err.message);
             }
             
             var userPool = new AmazonCognitoIdentity.CognitoUserPool(config);
@@ -105,14 +105,11 @@ Elm ports
                                     curr.token = authToken;
                                     curr.data = res;
                                     localStorage.setItem(key, JSON.stringify(curr));
-                                    
+
                                     app.ports.handle_authentication.send(JSON.stringify(res));
                                 } else {
-                                    
-                                    var userData = {uid: data.Item.UID, patches:data.Item.Patches};
-                                    var res = JSON.stringify(userData);
-                                    
-                                    app.ports.handle_authentication.send(res);
+                                    var res = {uid: data.Item.UID, patches:data.Item.Patches};
+                                    app.ports.handle_authentication.send(JSON.stringify(res));
                                 }
                             });
                         }
@@ -126,8 +123,7 @@ Elm ports
                     sendError(err);
                 },
                 newPasswordRequired: function (userAttributes, requiredAttributes) {
-                    console.log('Error authenticating: New Password Is Required');
-                    sendError({});
+                    sendError({message:'Error authenticating: New Password Is Required'});
                 }
             });
         };
@@ -137,8 +133,6 @@ Elm ports
             
             // transform data into format of DynamoDB
             var dat = {"UID": rawDat.uid, "Patches":rawDat.patches};
-
-            console.log("save() UID: " + dat.UID + " Patches: " + JSON.stringify(dat.Patches));
             
             // save to local storage
             var curr = load();
@@ -152,7 +146,7 @@ Elm ports
                 getCredentials().get(function(err) {
                     if (!err) {
                         var config = configureCognito();
-                        
+
                         // Load the DynamoDB data for this user
                         var params = {
                             TableName: config.TableName,

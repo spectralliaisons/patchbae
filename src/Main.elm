@@ -28,7 +28,6 @@ type alias Flags =
   }
 
 port authenticate : (String, String) -> Cmd msg
-
 port handle_authentication : (String -> msg) -> Sub msg
 
 -- Elm wants to save the model
@@ -86,7 +85,7 @@ update msg model =
       let
         user1 = case model.user of
           LoggedOut _ password -> LoggedOut str password
-          FailedLogIn _ password -> FailedLogIn str password
+          FailedLogIn _ password error -> FailedLogIn str password error
           other -> other
       in 
         ( {model | user = user1}
@@ -97,7 +96,7 @@ update msg model =
       let
         user1 = case model.user of
           LoggedOut username _ -> LoggedOut username str
-          FailedLogIn username _ -> FailedLogIn username str
+          FailedLogIn username _ error -> FailedLogIn username str error
           other -> other
       in 
         ( {model | user = user1}
@@ -108,7 +107,7 @@ update msg model =
       let
         cmd = case model.user of
           LoggedOut username password -> authenticate (username, password)
-          FailedLogIn username password -> authenticate (username, password)
+          FailedLogIn username password _ -> authenticate (username, password)
           _ -> Cmd.none
       in
         ( {model | user = LoggingIn}
@@ -122,9 +121,9 @@ update msg model =
       let
         failure = 
           case model.user of
-            LoggedOut username password -> {model | user = FailedLogIn username password}
-            FailedLogIn username password -> {model | user = FailedLogIn username password}
-            _ -> {model | user = FailedLogIn "" ""}
+            LoggedOut username password -> {model | user = FailedLogIn username password serialized}
+            FailedLogIn username password error -> {model | user = FailedLogIn username password error}
+            _ -> {model | user = FailedLogIn "" "" serialized}
         model1 = 
           case D.decodeString userDataDecoder serialized of
             Ok res -> 
@@ -258,7 +257,7 @@ view model =
     cv = case model.user of
       LoggedOut _ _ -> LoginView.view model
       LoggingIn -> LoginView.view model
-      FailedLogIn _ _ -> LoginView.view model
+      FailedLogIn _ _ _ -> LoginView.view model
       _ -> PatchesView.view model
   in 
     { title = Txt.title

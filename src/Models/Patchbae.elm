@@ -35,7 +35,7 @@ type alias Patches = Array Patch
 
 type alias UID = Maybe String
 
-type UserState = LoggedIn String | LoggedOut String String | LoggingIn | FailedLogIn String String | Guest
+type UserState = LoggedIn String | LoggedOut String String | LoggingIn | FailedLogIn String String String | Guest
 
 type alias UserData = 
     { uid : UID

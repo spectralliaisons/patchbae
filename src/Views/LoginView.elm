@@ -42,7 +42,7 @@ view model = Element.layout [] <|
             case model.user of
                 LoggedOut username password ->
                     input username password
-                FailedLogIn username password -> 
+                FailedLogIn username password error -> 
                     List.append 
                     (input username password)
                     <| [ Element.el 
@@ -52,7 +52,7 @@ view model = Element.layout [] <|
                             , Element.centerX
                             , Element.moveUp <| toFloat Style.offsetLogInFailedMessage
                             ]
-                            <| Element.text Txt.loginFailed
+                            <| Element.text error
                         ]
                 LoggingIn ->
                     [ Element.el
