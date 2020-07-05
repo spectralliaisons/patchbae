@@ -50,10 +50,17 @@ Elm ports
         var save = function (rawDat) {
             implClient().save(rawDat);
         };
+
+        // Load user from local storage
+        var guest = function () {
+            console.log("guest")
+            app.ports.handle_authentication.send(JSON.stringify(load().data));
+        }
         
         return {
             load : load,
             authenticate : authenticate,
+            guest : guest,
             save : save
         };
     };
@@ -69,6 +76,7 @@ Elm ports
         })
     });
 
+    app.ports.load_guest.subscribe(storage().guest)
     app.ports.authenticate.subscribe(storage().authenticate)
     app.ports.save.subscribe(storage().save);
 })(this);

@@ -6240,6 +6240,7 @@ var $elm$core$Array$filter = F2(
 				array));
 	});
 var $elm$browser$Browser$Navigation$load = _Browser_load;
+var $author$project$Main$load_guest = _Platform_outgoingPort('load_guest', $elm$json$Json$Encode$string);
 var $elm$core$Elm$JsArray$map = _JsArray_map;
 var $elm$core$Array$map = F2(
 	function (func, _v0) {
@@ -6672,10 +6673,11 @@ var $author$project$Main$update = F2(
 						{user: $author$project$Models$Patchbae$LoggingIn}),
 					cmd);
 			case 'SkipLogin':
-				return $author$project$Main$change(
+				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{user: $author$project$Models$Patchbae$Guest}));
+						{user: $author$project$Models$Patchbae$Guest}),
+					$author$project$Main$load_guest(''));
 			case 'HandleAuthentication':
 				var serialized = msg.a;
 				var failure = function () {
@@ -6698,6 +6700,10 @@ var $author$project$Main$update = F2(
 								{
 									user: A3($author$project$Models$Patchbae$FailedLogIn, username, password, error)
 								});
+						case 'Guest':
+							return _Utils_update(
+								model,
+								{user: $author$project$Models$Patchbae$Guest});
 						default:
 							return _Utils_update(
 								model,
@@ -6729,13 +6735,14 @@ var $author$project$Main$update = F2(
 				}();
 				return _Utils_Tuple2(model1, $elm$core$Platform$Cmd$none);
 			case 'LogOut':
-				return $author$project$Main$change(
+				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
 							patches: $author$project$Models$Patchbae$initPatches,
 							user: A2($author$project$Models$Patchbae$LoggedOut, '', '')
-						}));
+						}),
+					$elm$core$Platform$Cmd$none);
 			case 'SetPatchInstrument':
 				var patch = msg.a;
 				var instrument = msg.b;

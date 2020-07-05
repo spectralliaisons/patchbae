@@ -34,6 +34,7 @@ type alias Flags =
 
 port authenticate : (String, String) -> Cmd msg
 port handle_authentication : (String -> msg) -> Sub msg
+port load_guest : String -> Cmd msg
 
 -- Elm wants to save the model
 port save : UserData -> Cmd msg
@@ -151,7 +152,9 @@ update msg model =
         )
     
     SkipLogin ->
-      change {model | user = Guest}
+      ( {model | user = Guest}
+      , load_guest ""
+      )
     
     HandleAuthentication serialized ->
       let
@@ -159,6 +162,7 @@ update msg model =
           case model.user of
             LoggedOut username password -> {model | user = FailedLogIn username password serialized}
             FailedLogIn username password error -> {model | user = FailedLogIn username password error}
+            Guest -> {model | user = Guest}
             _ -> {model | user = FailedLogIn "" "" serialized}
         model1 = 
           case D.decodeString userDataDecoder serialized of
@@ -175,7 +179,9 @@ update msg model =
     -- HEADER
 
     LogOut ->
-      change {model | user = LoggedOut "" "", patches = initPatches}
+      ( {model | user = LoggedOut "" "", patches = initPatches}
+      , Cmd.none
+      )
 
     -- PATCHES
 
