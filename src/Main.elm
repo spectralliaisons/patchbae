@@ -11,7 +11,9 @@ import Task
 import Array as Array
 import Array.Extra as A
 import InfiniteList
-import Json.Decode as D 
+import Json.Decode as D
+import Time as Time
+import Debug exposing (log)
 
 import Msg.PatchMsg exposing (Msg(..))
 import Models.Patchbae exposing (UserData, UID, Model, userDataDecoder, initPatch, initPatches, Patches, sortBy, mostRecentIDInt, UserState(..))
@@ -19,6 +21,10 @@ import Models.Txt as Txt
 import Models.Style exposing (Size)
 import Views.LoginView as LoginView
 import Views.PatchesView as PatchesView
+
+-- save data if no modifications in n seconds
+saveDelay : Int
+saveDelay = 3
 
 type alias Flags = 
   { uid : UID
@@ -52,7 +58,7 @@ init {uid, patches, size} url key =
       Just who -> LoggedIn who
     patches1 = if Array.length patches == 0 then initPatches else patches
   in 
-    ( Model InfiniteList.init key size usr patches1
+    ( Model InfiniteList.init Nothing key size usr patches1
     , Cmd.none
     )
 
@@ -75,6 +81,37 @@ update msg model =
 
     SetSize size ->
       ( {model | size = size}
+      , Cmd.none
+      )
+    
+    -- TIME
+
+    Tick newTime ->
+      let
+        doNothing = 
+          ( model
+          , Cmd.none
+          )
+      in case model.lastChange of
+            Nothing -> doNothing
+            Just time -> 
+              let 
+                delta = Time.posixToMillis newTime - Time.posixToMillis time
+              in if delta >= saveDelay * 1000 then
+                let
+                  uid = case model.user of
+                    LoggedIn who -> Just who
+                    Guest -> Just "anonymous"
+                    _ -> Nothing
+                in
+                  ( { model | lastChange = Nothing }
+                  , save <| UserData uid model.patches
+                  )
+              else
+                doNothing
+    
+    SetLastTimeChanged time ->
+      ( {model | lastChange = Just time}
       , Cmd.none
       )
     
@@ -114,7 +151,7 @@ update msg model =
         )
     
     SkipLogin ->
-      setCache {model | user = Guest}
+      change {model | user = Guest}
     
     HandleAuthentication serialized ->
       let
@@ -138,7 +175,7 @@ update msg model =
     -- HEADER
 
     LogOut ->
-      setCache {model | user = LoggedOut "" "", patches = initPatches}
+      change {model | user = LoggedOut "" "", patches = initPatches}
 
     -- PATCHES
 
@@ -152,7 +189,7 @@ update msg model =
               p
           )
       in 
-        setCache {model | patches = patches1}
+        change {model | patches = patches1}
       
     SetPatchCategory patch category ->
       let
@@ -164,7 +201,7 @@ update msg model =
               p
           )
       in 
-        setCache {model | patches = patches1}
+        change {model | patches = patches1}
     
     SetPatchAddress patch address ->
       let
@@ -176,7 +213,7 @@ update msg model =
               p
           )
       in 
-        setCache {model | patches = patches1}
+        change {model | patches = patches1}
     
     SetPatchName patch name ->
       let
@@ -188,7 +225,7 @@ update msg model =
               p
           )
       in 
-        setCache {model | patches = patches1}
+        change {model | patches = patches1}
     
     AddPatch ->
       let
@@ -200,14 +237,14 @@ update msg model =
           Array.append (Array.fromList [newPatch]) model.patches
 
       in
-        setCache {model | patches = patches1}
+        change {model | patches = patches1}
     
     RmPatch patch ->
       let
         patches1 = Array.filter (\{id} -> id /= patch.id) model.patches
 
       in
-        setCache {model | patches = patches1}
+        change {model | patches = patches1}
     
     SetPatchRating patch rating ->
       let
@@ -219,32 +256,27 @@ update msg model =
               p
           )
       in 
-        setCache {model | patches = patches1}
+        change {model | patches = patches1}
     
     SortBy how ->
       let patches1 = sortBy model.patches how
-      in setCache {model | patches = patches1}
+      in change {model | patches = patches1}
     
     InfiniteListMsg infiniteList ->
       ( { model | infiniteList = infiniteList }
       , Cmd.none 
       )
 
-setCache : Model -> (Model, Cmd msg)
-setCache model =
-  let
-    uid = case model.user of
-      LoggedIn who -> Just who
-      Guest -> Just "anonymous"
-      _ -> Nothing
-  in
-    ( model 
-    , save <| UserData uid model.patches
-    )
+change : Model -> (Model, Cmd Msg)
+change model =
+  ( model
+  , Task.perform SetLastTimeChanged Time.now
+  )
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.batch <|
   [ Events.onResize (\w h -> SetSize <| Size w h)
+  , Time.every 16 Tick
   , handle_authentication HandleAuthentication
   ]
 

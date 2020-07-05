@@ -3,6 +3,7 @@ module Msg.PatchMsg exposing (Msg(..))
 import Models.Patchbae exposing (Patch, Patches, Sortable(..))
 import Models.Style exposing (Size)
 
+import Time
 import InfiniteList
 import Url
 import Browser
@@ -12,6 +13,9 @@ type Msg
     = UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
     | SetSize Size
+    -- TIME
+    | Tick Time.Posix
+    | SetLastTimeChanged Time.Posix
     -- LOGIN
     | SetLogin String
     | SetPassword String

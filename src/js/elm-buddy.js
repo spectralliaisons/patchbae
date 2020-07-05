@@ -32,7 +32,7 @@ Elm ports
         var implClient = function() { 
             return window.pbClient({
                 loadCache: load,
-                setCache: function(dat) { 
+                setCache: function(dat) {
                     localStorage.setItem(key, JSON.stringify(dat)); 
                 }
             }); 

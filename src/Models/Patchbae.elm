@@ -8,10 +8,11 @@ import Json.Decode as D exposing (string, list, array, maybe, int)
 import Json.Decode.Pipeline exposing (required)
 import Array exposing (Array)
 import InfiniteList
-import Debug exposing (log)
+import Time
 
 type alias Model =
     { infiniteList : InfiniteList.Model
+    , lastChange : Maybe Time.Posix
     , key : Navigation.Key
     , size : Size
     , user : UserState
