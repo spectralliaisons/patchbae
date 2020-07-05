@@ -93,9 +93,9 @@ aws cognito-idp admin-set-user-password --user-pool-id XXX --username XXX --pass
 9. Install Amazon Cognito with Node JS:
 `npm install amazon-cognito-identity-js`
 
-10. Create `./src/js/priv/cognitoConfig.js` for your Amazon Cognito Credentials and fill in your Identity, User Pool, & Client Ids with the values you just created:
+10. Modify `awsConfig()` in `./src/js/client.js` to return your Amazon Cognito Credentials by filling in your Identity, User Pool, & Client Ids with the values you just created:
 ```js
-window.configureCognito = function () {
+var awsConfig = function() {
     return {
         region: XXX,
         IdentityPoolId: XXX,
@@ -110,7 +110,8 @@ window.configureCognito = function () {
 
 #### [elm-live](https://www.elm-live.com/)
 
-1. Compile the Elm code into JavaScript with live editing: `elm-live src/Main.elm --open --start-page=index.html -- --output=elm.js`
+1. Compile the Elm code into JavaScript with live editing:
+`elm-live src/Main.elm --open --start-page=index.html -- --output=elm.js`
 
 2. Navigate to [http://localhost:8000](http://localhost:8000)
 
