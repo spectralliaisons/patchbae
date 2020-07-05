@@ -11,7 +11,6 @@ import Task
 import Array as Array
 import Array.Extra as A
 import InfiniteList
-import Debug exposing (log)
 import Json.Decode as D 
 
 import Msg.PatchMsg exposing (Msg(..))
@@ -130,9 +129,7 @@ update msg model =
               case res.uid of
                 Just who -> {model | user = LoggedIn who, patches = res.patches}
                 _ -> failure
-            err -> 
-              let _ = log "Error parsing user patches:" err
-              in failure
+            err -> failure
       in
         ( model1
         , Cmd.none
