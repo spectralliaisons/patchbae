@@ -111,7 +111,7 @@ var awsConfig = function() {
 #### [elm-live](https://www.elm-live.com/)
 
 1. Compile the Elm code into JavaScript with live editing:
-`elm-live src/Main.elm --open --start-page=index.html -- --output=elm.js`
+`elm-live src/Main.elm --open --start-page=index.html -- --output=elm.min.js`
 
 2. Navigate to [http://localhost:8000](http://localhost:8000)
 
